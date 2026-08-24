@@ -1,0 +1,93 @@
+/* ===== ОБЩИЕ НАСТРОЙКИ ===== */
+/* Звёздочка * означает "применить ко ВСЕМ элементам" */
+* {
+  margin: 0;           /* убираем стандартные отступы браузера */
+  padding: 0;
+  box-sizing: border-box; /* удобный способ считать размеры элементов */
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif; /* какой шрифт использовать */
+  background-color: #1a1a1a; /* тёмный фон — премиальная, "королевская" атмосфера */
+  color: #f0e6d2; /* светлый тёплый текст, хорошо читается на тёмном фоне */
+  line-height: 1.6; /* расстояние между строками текста */
+}
+
+/* ===== ШАПКА ===== */
+.header {
+  background-color: #0d0d0d; /* почти чёрный — премиальный вид */
+  color: #d4af37; /* золотой цвет — под "королевскую" тему */
+  text-align: center;
+  padding: 60px 20px; /* отступ сверху/снизу 60px, слева/справа 20px */
+  border-bottom: 3px solid #d4af37; /* золотая полоса снизу шапки */
+}
+
+.header h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+/* ===== СЕКЦИИ (общий стиль для всех блоков) ===== */
+section {
+  max-width: 700px;      /* не растягиваем текст на весь широкий экран */
+  margin: 0 auto;         /* центрируем блок по горизонтали */
+  padding: 40px 20px;
+}
+
+section h2 {
+  font-size: 28px;
+  color: #d4af37;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #d4af37; /* подчёркивание под заголовком */
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* ===== МЕНЮ ===== */
+.menu-list {
+  list-style: none; /* убираем стандартные точки у списка */
+}
+
+.menu-list li {
+  display: flex;              /* расставляем название и цену по краям */
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px dashed #555; /* пунктирная линия между блюдами, светлее под тёмный фон */
+  font-size: 18px;
+}
+
+.item-name {
+  font-weight: 600;
+}
+
+.item-price {
+  color: #d4af37;
+  font-weight: bold;
+}
+
+/* ===== ЧАСЫ РАБОТЫ И КОНТАКТЫ ===== */
+.hours, .contact {
+  background-color: #262626; /* чуть светлее основного фона — выделяет блок */
+  border-radius: 10px; /* скруглённые углы */
+  border: 1px solid #3a3a3a; /* тонкая рамка для объёма на тёмном фоне */
+}
+
+/* ===== ПОДВАЛ ===== */
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #0d0d0d;
+  color: #d4af37;
+  font-size: 14px;
+}
+
+/* ===== АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ ===== */
+/* Эти стили включаются, ТОЛЬКО когда экран уже 600px */
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 32px; /* на телефоне заголовок меньше */
+  }
+  section h2 {
+    font-size: 22px;
+  }
+}

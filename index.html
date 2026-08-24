@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- Эта строка говорит браузеру: "это современный HTML5 документ" -->
+<html lang="de">
+<!-- lang="de" — язык страницы (немецкий, раз ресторан в Германии) -->
+
+<head>
+  <!-- В <head> лежит информация ДЛЯ БРАУЗЕРА, невидимая посетителю -->
+  <meta charset="UTF-8">
+  <!-- Кодировка текста, чтобы буквы типа ö, ü, ß отображались правильно -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Эта строка делает сайт адаптивным для телефонов -->
+  <title>King Zone Burger München</title>
+  <!-- Текст, который виден во вкладке браузера -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Подключаем файл со стилями (оформление) -->
+</head>
+
+<body>
+  <!-- В <body> лежит всё, что ВИДИТ посетитель сайта -->
+
+  <!-- ===== ШАПКА САЙТА ===== -->
+  <header class="header">
+    <h1>👑 KING ZONE</h1>
+    <p>Real Taste. Real Quality. Real King Zone.</p>
+  </header>
+
+  <!-- ===== О НАС ===== -->
+  <section class="about">
+    <h2>Über uns</h2>
+    <p>
+      Bei King Zone verwandeln wir jeden Burger in ein kleines Erlebnis.
+      Frisch gepresstes Smash-Beef, hausgemachte Saucen und viel Liebe zum
+      Detail — dafür stehen wir jeden Tag.
+    </p>
+  </section>
+
+  <!-- ===== МЕНЮ ===== -->
+  <section class="menu">
+    <h2>Unsere Speisekarte</h2>
+    <!-- <ul> = список, каждый <li> = один пункт списка -->
+    <ul class="menu-list">
+      <li>
+        <span class="item-name">Smash Burger</span>
+        <span class="item-price">8,50 €</span>
+      </li>
+      <li>
+        <span class="item-name">Truffle Burger</span>
+        <span class="item-price">10,50 €</span>
+      </li>
+      <li>
+        <span class="item-name">Cheese Burger</span>
+        <span class="item-price">9,00 €</span>
+      </li>
+      <li>
+        <span class="item-name">Mac 'n' Cheese</span>
+        <span class="item-price">6,50 €</span>
+      </li>
+      <li>
+        <span class="item-name">Pommes</span>
+        <span class="item-price">3,50 €</span>
+      </li>
+    </ul>
+    <!-- ⚠️ Это примерные цены для практики — уточни у заведения точное меню и цены! -->
+  </section>
+
+  <!-- ===== ЧАСЫ РАБОТЫ ===== -->
+  <section class="hours">
+    <h2>Öffnungszeiten</h2>
+    <p>Montag – Donnerstag: 11:00 – 23:00</p>
+    <p>Freitag: 15:00 – 23:00</p>
+    <p>Samstag – Sonntag: 11:00 – 23:00</p>
+  </section>
+
+  <!-- ===== КОНТАКТЫ ===== -->
+  <section class="contact">
+    <h2>Kontakt & Adresse</h2>
+    <p>Landsberger Str. 487, 81241 München</p>
+    <p>Telefon: 089 74493013</p>
+  </section>
+
+  <!-- ===== ПОДВАЛ ===== -->
+  <footer class="footer">
+    <p>&copy; 2026 King Zone. Alle Rechte vorbehalten.</p>
+  </footer>
+
+</body>
+</html>
