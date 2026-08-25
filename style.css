@@ -91,3 +91,43 @@ section h2 {
     font-size: 22px;
   }
 }
+
+/* ===== ФОНОВОЕ ФОТО В ШАПКЕ (размытое) ===== */
+.header {
+  position: relative;
+  min-height: 100vh;           /* шапка на весь экран по высоте */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('images/photo_2026-08-25_16-49-47.jpg');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  border-bottom: 3px solid #d4af37;
+  padding: 0;
+}
+
+.header-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(13, 13, 13, 0.75); /* тёмная плёнка поверх фото для читаемости текста */
+  backdrop-filter: blur(6px);          /* само размытие фото */
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #d4af37;
+  padding: 20px;
+}
+
+/* ===== ОБЫЧНОЕ ФОТО В "О НАС" ===== */
+.about-photo {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  margin: 30px auto 0;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+}
