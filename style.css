@@ -131,3 +131,44 @@ section h2 {
   border-radius: 14px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.4);
 }
+/* ===== БЛОК "КАК НАС НАЙТИ" ===== */
+.map-wrapper {
+  position: relative;       /* нужно для overlay поверх карты */
+  display: block;
+  margin-top: 20px;
+  border-radius: 14px;
+  overflow: hidden;         /* обрезаем углы iframe по скруглению блока */
+  box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+}
+
+.map-frame {
+  width: 100%;
+  height: 300px;
+  border: 0;                /* убираем стандартную рамку iframe */
+  display: block;
+}
+
+.map-click-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  cursor: pointer;          /* показываем "рука" при наведении, как у ссылки */
+}
+
+/* ===== БЛОК КНОПОК СВЯЗИ ===== */
+.contact-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.whatsapp {
+  background-color: #25D366; /* фирменный зелёный WhatsApp */
+  color: white;
+}
+
+.instagram {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: white;
+}

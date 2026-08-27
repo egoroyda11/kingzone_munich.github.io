@@ -72,12 +72,39 @@
     <p>Freitag: 15:00 – 23:00</p>
     <p>Samstag – Sonntag: 11:00 – 23:00</p>
   </section>
+  <!-- ===== КАК НАС НАЙТИ (КАРТА) ===== -->
+  <section class="find-us">
+    <h2>How to find us</h2>
+    <p>
+      We're located right on Landsberger Straße, easy to reach by car or
+      public transport. Tap the map below to open directions in Google Maps.
+    </p>
 
+    <!-- Обёртка-ссылка вокруг карты: клик по карте откроет Google Maps -->
+    <a href="https://maps.app.goo.gl/gMobptd2NGAHKqoT7" target="_blank" class="map-wrapper">
+      <!-- iframe встраивает карту прямо на страницу, без ключа API,
+           output=embed — специальный параметр именно для встраивания -->
+      <iframe
+        src="https://www.google.com/maps?q=Landsberger+Str.+487,+81241+München&output=embed"
+        loading="lazy"
+        class="map-frame">
+      </iframe>
+      <!-- Прозрачный слой поверх карты — иначе клик "проваливается" внутрь
+           карты (можно двигать её мышкой), а не переходит по ссылке -->
+      <div class="map-click-overlay"></div>
+    </a>
+  </section>
   <!-- ===== КОНТАКТЫ ===== -->
-  <section class="contact">
-    <h2>Kontakt & Adresse</h2>
-    <p>Landsberger Str. 487, 81241 München</p>
-    <p>Telefon: 089 74493013</p>
+    <section class="contact">
+    <h2>Contact us</h2>
+
+    <div class="contact-buttons">
+      <a href="tel:+48795070938" class="cta-button">📞 +48 795 070 938</a>
+
+      <a href="https://wa.me/48795070938" target="_blank" class="cta-button whatsapp">💬 WhatsApp</a>
+
+      <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="cta-button instagram">📷 Instagram</a>
+    </div>
   </section>
 
   <!-- ===== ПОДВАЛ ===== -->
