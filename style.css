@@ -143,8 +143,8 @@ section h2 {
 
 .map-frame {
   width: 100%;
-  height: 300px;
-  border: 0;                /* убираем стандартную рамку iframe */
+  height: 500px;   /* было 300px — сделали заметно больше */
+  border: 0;
   display: block;
 }
 
@@ -171,4 +171,9 @@ section h2 {
 .instagram {
   background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   color: white;
+}
+/* Явный сброс стандартных стилей ссылки на всякий случай */
+.cta-button, .cta-button:visited, .cta-button:link {
+  color: inherit;           /* цвет текста берём из фона кнопки, а не синий по умолчанию */
+  text-decoration: none;
 }
