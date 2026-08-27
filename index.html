@@ -1,102 +1,154 @@
 <!DOCTYPE html>
-<!-- Эта строка говорит браузеру: "это современный HTML5 документ" -->
 <html lang="de">
-<!-- lang="de" — язык страницы (немецкий, раз ресторан в Германии) -->
-
 <head>
-  <!-- В <head> лежит информация ДЛЯ БРАУЗЕРА, невидимая посетителю -->
   <meta charset="UTF-8">
-  <!-- Кодировка текста, чтобы буквы типа ö, ü, ß отображались правильно -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Эта строка делает сайт адаптивным для телефонов -->
   <title>King Zone Burger München</title>
-  <!-- Текст, который виден во вкладке браузера -->
+  <!-- Подключаем рукописный шрифт с Google Fonts для заголовка шапки -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <!-- Подключаем файл со стилями (оформление) -->
 </head>
 
 <body>
-  <!-- В <body> лежит всё, что ВИДИТ посетитель сайта -->
 
- <header class="header">
-    <div class="header-overlay"></div>
-    <div class="header-content">
-      <h1>👑 KING ZONE</h1>
-      <p>Real Taste. Real Quality. Real King Zone.</p>
+  <!-- ===== ДЕКОРАТИВНЫЙ ФОН: золотые/белые размытые блики по всему сайту =====
+       position: fixed — держит их на месте, даже когда страница скроллится -->
+  <div class="bokeh bokeh-1"></div>
+  <div class="bokeh bokeh-2"></div>
+  <div class="bokeh bokeh-3"></div>
+  <div class="bokeh bokeh-4"></div>
+
+  <!-- ===== ЗАКРЕПЛЁННАЯ НАВИГАЦИЯ ===== -->
+  <nav class="navbar">
+    <div class="nav-links">
+      <a href="#about" data-i18n="nav-about">Über uns</a>
+      <a href="#gallery" data-i18n="nav-gallery">Galerie</a>
+      <a href="#discounts" data-i18n="nav-discounts">Rabatte</a>
+      <a href="#menu" data-i18n="nav-menu">Menü</a>
+      <a href="#find-us" data-i18n="nav-find">Wo wir sind</a>
+      <a href="#career" data-i18n="nav-career">Karriere</a>
+      <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="nav-instagram" aria-label="Instagram">📷</a>
     </div>
-  </header>
-  <!-- ===== О НАС ===== -->
-  <section class="about">
-    <h2>Über uns</h2>
-    <p>
-      Bei King Zone verwandeln wir jeden Burger in ein kleines Erlebnis.
-      Frisch gepresstes Smash-Beef, hausgemachte Saucen und viel Liebe zum
-      Detail — dafür stehen wir jeden Tag.
-    </p>
-      <header class="header">
+    <div class="lang-switch">
+      <button onclick="setLanguage('de')" class="lang-btn active" data-lang="de">DE</button>
+      <button onclick="setLanguage('en')" class="lang-btn" data-lang="en">EN</button>
+      <button onclick="setLanguage('ru')" class="lang-btn" data-lang="ru">RU</button>
+      <button onclick="setLanguage('uk')" class="lang-btn" data-lang="uk">UK</button>
+    </div>
+  </nav>
+
+  <!-- ===== ШАПКА: видео на фоне, размытое, рукописный заголовок с анимацией ===== -->
+  <header class="header">
     <video autoplay muted loop playsinline class="header-video">
-      <source src="promo.mp4/IMG_2918.mp4" type="video/mp4">
+      <source src="promo.mp4/IMG_2921.mp4" type="video/mp4">
     </video>
     <div class="header-overlay"></div>
     <div class="header-content">
-      <h1>👑 KING ZONE</h1>
+      <h1 class="brand-title">King Zone</h1>
       <p>Real Taste. Real Quality. Real King Zone.</p>
     </div>
   </header>
 
-  <section class="video-section">
-    <h2>Watch us in action</h2>
-    <video autoplay muted loop playsinline class="promo-video">
-      <source src="promo.mp4/IMG_2918.mp4" type="video/mp4">
+  <!-- ===== О НАС ===== -->
+  <section id="about" class="about card">
+    <h2 data-i18n="about-heading">Über uns</h2>
+    <p data-i18n="about-text">
+      Bei King Zone verwandeln wir jeden Burger in ein kleines Erlebnis. Wir sind
+      ein neues Konzept in München — mit eigens entwickelten Signature-Rezepten,
+      die man sonst nirgends findet. Jeder Burger, jedes Sandwich und jede Sauce
+      ist hausgemacht, nach unseren eigenen Ideen, ohne Kompromisse bei der
+      Qualität. Frisch gepresstes Smash-Beef, geröstete Brioche-Buns und ein
+      Team, das mit echter Leidenschaft kocht — das ist King Zone.
+    </p>
+    <video autoplay muted loop playsinline class="about-video">
+      <source src="promo.mp4/IMG_2921.mp4" type="video/mp4">
     </video>
   </section>
 
-  <!-- ===== МЕНЮ ===== -->
-  <section class="menu">
-    <h2>Unsere Speisekarte</h2>
-    <!-- <ul> = список, каждый <li> = один пункт списка -->
-    <ul class="menu-list">
-      <li>
-        <span class="item-name">Smash Burger</span>
-        <span class="item-price">9,00€</span>
-      </li>
-      <li>
-        <span class="item-name">Truffle Burger</span>
-        <span class="item-price">10,50 €</span>
-      </li>
-      <li>
-        <span class="item-name">Cheese Burger</span>
-        <span class="item-price">9,00 €</span>
-      </li>
-      <li>
-        <span class="item-name">Mac 'n' Cheese</span>
-        <span class="item-price">6,50 €</span>
-      </li>
-      <li>
-        <span class="item-name">Pommes</span>
-        <span class="item-price">3,50 €</span>
-      </li>
-    </ul>
-    <!-- ⚠️ Это примерные цены для практики — уточни у заведения точное меню и цены! -->
+  <!-- ===== ГАЛЕРЕЯ (видео-карусель) ===== -->
+  <section id="gallery" class="video-section card">
+    <h2 data-i18n="gallery-heading">Galerie</h2>
+    <div class="video-carousel">
+      <button class="carousel-btn prev" onclick="changeVideo(-1)" aria-label="Vorheriges Video">‹</button>
+      <video id="carouselVideo" controls playsinline class="promo-video">
+        <source src="promo.mp4/IMG_2951.mp4" type="video/mp4">
+      </video>
+      <button class="carousel-btn next" onclick="changeVideo(1)" aria-label="Nächstes Video">›</button>
+    </div>
+    <div class="carousel-dots">
+      <span class="dot active" data-index="0"></span>
+      <span class="dot" data-index="1"></span>
+      <span class="dot" data-index="2"></span>
+    </div>
   </section>
 
-  <!-- ===== ЧАСЫ РАБОТЫ ===== -->
-  <section class="hours">
-    <h2>Öffnungszeiten</h2>
-    <p>Montag – Donnerstag: 11:00 – 23:00</p>
-    <p>Freitag: 15:00 – 23:00</p>
-    <p>Samstag – Sonntag: 11:00 – 23:00</p>
+  <!-- ===== СКИДКИ ===== -->
+  <section id="discounts" class="discounts card">
+    <h2 data-i18n="discounts-heading">Rabatte</h2>
+    <!-- На самих фото уже всё написано — просто показываем их каруселью -->
+    <div class="auto-carousel">
+      <img src="images/photo_2026-08-27_22-09-55.jpg" alt="Rabatt" class="carousel-img">
+      <img src="images/photo_2026-08-27_22-09-57.jpg" alt="Rabatt" class="carousel-img">
+    </div>
   </section>
-  <!-- ===== КАК НАС НАЙТИ (КАРТА) ===== -->
-  <section class="find-us">
-    <h2>How to find us</h2>
-    <p>
+
+  <!-- ===== МЕНЮ: 3 яруса, у каждого своя карусель фото ===== -->
+  <section id="menu" class="menu-wrapper">
+    <h2 class="menu-main-title" data-i18n="menu-heading">Menü</h2>
+
+    <!-- ЯРУС 1: БУРГЕРЫ -->
+    <div class="menu-tier card">
+      <h3 data-i18n="menu-cat-burgers">Burger</h3>
+      <div class="auto-carousel">
+        <img src="images/photo_2026-08-27_22-09-10.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-21.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-06.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-36.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-23.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-14.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-27.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-25.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-30.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-09.jpg" alt="Burger" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-12.jpg" alt="Burger" class="carousel-img">
+      </div>
+    </div>
+
+    <!-- ЯРУС 2: СЭНДВИЧИ И ЛАВАШИ -->
+    <div class="menu-tier card">
+      <h3 data-i18n="menu-cat-sandwiches">Sandwiches & Lavash</h3>
+      <div class="auto-carousel">
+        <img src="images/photo_2026-08-27_22-09-43.jpg" alt="Lavash" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-39.jpg" alt="Lavash" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-32.jpg" alt="Lavash" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-34.jpg" alt="Lavash" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-41.jpg" alt="Lavash" class="carousel-img">
+      </div>
+    </div>
+
+    <!-- ЯРУС 3: ЗАКУСКИ -->
+    <div class="menu-tier card">
+      <h3 data-i18n="menu-cat-snacks">Snacks</h3>
+      <div class="auto-carousel">
+        <img src="images/photo_2026-08-27_22-09-48.jpg" alt="Snack" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-46.jpg" alt="Snack" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-50.jpg" alt="Snack" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-44.jpg" alt="Snack" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-51.jpg" alt="Snack" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-53.jpg" alt="Snack" class="carousel-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== КАК НАС НАЙТИ ===== -->
+  <section id="find-us" class="find-us card">
+    <h2 data-i18n="find-heading">How to find us</h2>
+    <p data-i18n="find-text">
       We're located right on Landsberger Straße, easy to reach by car or
       public transport. Tap the map below to open directions in Google Maps.
     </p>
-
-    <!-- Обёртка-ссылка вокруг карты: клик по карте откроет Google Maps -->
-        <a href="https://www.google.com/maps/place/King+Zone+burger/@48.1459377,11.4643777,17z/data=!4m6!3m5!1s0x479e771b1a970c95:0xecbc0a2d33273ba3!8m2!3d48.1459377!4d11.4659088" target="_blank" class="map-wrapper">
+    <a href="https://www.google.com/maps/place/King+Zone+burger/@48.1459377,11.4643777,17z/data=!4m6!3m5!1s0x479e771b1a970c95:0xecbc0a2d33273ba3!8m2!3d48.1459377!4d11.4659088" target="_blank" class="map-wrapper">
       <iframe
         src="https://www.google.com/maps?q=King+Zone+burger+Landsberger+Str.+487+München&output=embed"
         loading="lazy"
@@ -104,22 +156,163 @@
       </iframe>
       <div class="map-click-overlay"></div>
     </a>
-    </a>
   </section>
-  <!-- ===== КОНТАКТЫ ===== -->
-     <section class="contact">
-    <h2>Contact us</h2>
 
+  <!-- ===== КАРЬЕРА ===== -->
+  <section id="career" class="career card">
+    <h2 data-i18n="career-heading">Karriere</h2>
+    <p data-i18n="career-text">
+      Werde Teil des King Zone Teams! Wir suchen motivierte Mitarbeiter, die
+      mit Leidenschaft bei der Sache sind. Schreib uns einfach über WhatsApp
+      oder Instagram.
+    </p>
+  </section>
+
+  <!-- ===== КОНТАКТЫ ===== -->
+  <section class="contact card">
+    <h2 data-i18n="contact-heading">Contact us</h2>
     <div class="contact-buttons">
       <a href="tel:+498974493013" class="cta-button">📞 089 74493013</a>
       <a href="https://wa.me/48795070938" target="_blank" class="cta-button whatsapp">💬 WhatsApp</a>
       <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="cta-button instagram">📷 Instagram</a>
     </div>
   </section>
+
   <!-- ===== ПОДВАЛ ===== -->
   <footer class="footer">
     <p>&copy; 2026 King Zone. Alle Rechte vorbehalten.</p>
   </footer>
+
+  <script>
+    /* ===== КАРУСЕЛЬ ВИДЕО В ГАЛЕРЕЕ ===== */
+    const videos = [
+      "promo.mp4/IMG_2951.mp4",
+      "promo.mp4/IMG_2952.mp4",
+      "promo.mp4/IMG_2953.mp4"
+    ];
+    let currentVideo = 0;
+
+    function changeVideo(direction) {
+      currentVideo = (currentVideo + direction + videos.length) % videos.length;
+      const videoEl = document.getElementById('carouselVideo');
+      videoEl.src = videos[currentVideo];
+      videoEl.load();
+      videoEl.play();
+      document.querySelectorAll('.dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentVideo);
+      });
+    }
+
+    /* ===== АВТО-КАРУСЕЛИ ФОТО (скидки + 3 яруса меню) =====
+       Едут сами вправо, останавливаются пока палец/мышь на них,
+       и их всегда можно докрутить руками (обычный scroll) */
+    document.querySelectorAll('.auto-carousel').forEach(carousel => {
+      let paused = false;
+
+      setInterval(() => {
+        if (paused) return;
+        carousel.scrollLeft += 1;
+        // Если доехали до конца — начинаем сначала (создаёт эффект бесконечной ленты)
+        if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth) {
+          carousel.scrollLeft = 0;
+        }
+      }, 20);
+
+      carousel.addEventListener('mouseenter', () => paused = true);
+      carousel.addEventListener('mouseleave', () => paused = false);
+      carousel.addEventListener('touchstart', () => paused = true);
+      carousel.addEventListener('touchend', () => paused = false);
+    });
+
+    /* ===== ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА =====
+       translations — "словарь": для каждого ключа (data-i18n) есть
+       перевод на 4 языка. setLanguage меняет текст всех элементов сразу. */
+    const translations = {
+      de: {
+        "nav-about": "Über uns", "nav-gallery": "Galerie", "nav-discounts": "Rabatte",
+        "nav-menu": "Menü", "nav-find": "Wo wir sind", "nav-career": "Karriere",
+        "about-heading": "Über uns",
+        "about-text": "Bei King Zone verwandeln wir jeden Burger in ein kleines Erlebnis. Wir sind ein neues Konzept in München — mit eigens entwickelten Signature-Rezepten, die man sonst nirgends findet. Jeder Burger, jedes Sandwich und jede Sauce ist hausgemacht, nach unseren eigenen Ideen, ohne Kompromisse bei der Qualität. Frisch gepresstes Smash-Beef, geröstete Brioche-Buns und ein Team, das mit echter Leidenschaft kocht — das ist King Zone.",
+        "gallery-heading": "Galerie",
+        "discounts-heading": "Rabatte",
+        "menu-heading": "Menü",
+        "menu-cat-burgers": "Burger",
+        "menu-cat-sandwiches": "Sandwiches & Lavash",
+        "menu-cat-snacks": "Snacks",
+        "find-heading": "So findest du uns",
+        "find-text": "Wir befinden uns direkt an der Landsberger Straße, gut erreichbar mit Auto oder öffentlichen Verkehrsmitteln. Tippe auf die Karte, um die Route in Google Maps zu öffnen.",
+        "career-heading": "Karriere",
+        "career-text": "Werde Teil des King Zone Teams! Wir suchen motivierte Mitarbeiter, die mit Leidenschaft bei der Sache sind. Schreib uns einfach über WhatsApp oder Instagram.",
+        "contact-heading": "Kontakt"
+      },
+      en: {
+        "nav-about": "About us", "nav-gallery": "Gallery", "nav-discounts": "Discounts",
+        "nav-menu": "Menu", "nav-find": "Where we are", "nav-career": "Careers",
+        "about-heading": "About us",
+        "about-text": "At King Zone, we turn every burger into a little experience. We're a new concept in Munich — with signature recipes you won't find anywhere else. Every burger, sandwich, and sauce is handmade, following our own ideas, without compromising on quality. Freshly pressed smash beef, toasted brioche buns, and a team that cooks with real passion — that's King Zone.",
+        "gallery-heading": "Gallery",
+        "discounts-heading": "Discounts",
+        "menu-heading": "Menu",
+        "menu-cat-burgers": "Burgers",
+        "menu-cat-sandwiches": "Sandwiches & Lavash",
+        "menu-cat-snacks": "Snacks",
+        "find-heading": "How to find us",
+        "find-text": "We're located right on Landsberger Straße, easy to reach by car or public transport. Tap the map below to open directions in Google Maps.",
+        "career-heading": "Careers",
+        "career-text": "Join the King Zone team! We're looking for motivated people who bring real passion to the job. Just reach out via WhatsApp or Instagram.",
+        "contact-heading": "Contact us"
+      },
+      ru: {
+        "nav-about": "О нас", "nav-gallery": "Галерея", "nav-discounts": "Скидки",
+        "nav-menu": "Меню", "nav-find": "Где мы", "nav-career": "Работа",
+        "about-heading": "О нас",
+        "about-text": "В King Zone мы превращаем каждый бургер в маленькое приключение. Мы — новая концепция в Мюнхене, с авторскими рецептами, которых больше нигде не найти. Каждый бургер, сэндвич и соус готовится вручную, по нашим собственным идеям, без компромиссов в качестве. Свежая смэш-говядина, поджаренные брioш-булочки и команда, которая готовит с настоящей страстью — это King Zone.",
+        "gallery-heading": "Галерея",
+        "discounts-heading": "Скидки",
+        "menu-heading": "Меню",
+        "menu-cat-burgers": "Бургеры",
+        "menu-cat-sandwiches": "Сэндвичи и лаваши",
+        "menu-cat-snacks": "Закуски",
+        "find-heading": "Как нас найти",
+        "find-text": "Мы находимся прямо на Ландсбергер штрассе, легко добраться на машине или общественным транспортом. Нажми на карту, чтобы открыть маршрут в Google Maps.",
+        "career-heading": "Работа",
+        "career-text": "Присоединяйся к команде King Zone! Мы ищем мотивированных сотрудников, которые горят своим делом. Просто напиши нам в WhatsApp или Instagram.",
+        "contact-heading": "Контакты"
+      },
+      uk: {
+        "nav-about": "Про нас", "nav-gallery": "Галерея", "nav-discounts": "Знижки",
+        "nav-menu": "Меню", "nav-find": "Де ми", "nav-career": "Робота",
+        "about-heading": "Про нас",
+        "about-text": "У King Zone ми перетворюємо кожен бургер на маленьку пригоду. Ми — нова концепція в Мюнхені, з авторськими рецептами, яких більше ніде не знайти. Кожен бургер, сендвіч і соус готується вручну, за нашими власними ідеями, без жодних компромісів у якості. Свіжа смэш-яловичина, підсмажені булочки бріош і команда, яка готує зі справжньою пристрастю — це King Zone.",
+        "gallery-heading": "Галерея",
+        "discounts-heading": "Знижки",
+        "menu-heading": "Меню",
+        "menu-cat-burgers": "Бургери",
+        "menu-cat-sandwiches": "Сендвічі та лаваші",
+        "menu-cat-snacks": "Закуски",
+        "find-heading": "Як нас знайти",
+        "find-text": "Ми знаходимось прямо на Ландсбергер штрассе, легко дістатися на машині або громадським транспортом. Натисни на карту, щоб відкрити маршрут у Google Maps.",
+        "career-heading": "Робота",
+        "career-text": "Приєднуйся до команди King Zone! Ми шукаємо мотивованих співробітників, які горять своєю справою. Просто напиши нам у WhatsApp або Instagram.",
+        "contact-heading": "Контакти"
+      }
+    };
+
+    function setLanguage(lang) {
+      // Проходим по всем элементам с data-i18n и меняем текст на нужный язык
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+      // Подсвечиваем активную кнопку языка
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      document.documentElement.lang = lang;
+    }
+  </script>
 
 </body>
 </html>

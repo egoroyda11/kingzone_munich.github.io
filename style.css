@@ -1,182 +1,133 @@
-/* ===== ОБЩИЕ НАСТРОЙКИ ===== */
-/* Звёздочка * означает "применить ко ВСЕМ элементам" */
+/* ===== ОБЩИЕ НАСТРОЙКИ ===== *//* ===== ОБЩИЕ НАСТРОЙКИ ===== */
 * {
-  margin: 0;           /* убираем стандартные отступы браузера */
+  margin: 0;
   padding: 0;
-  box-sizing: border-box; /* удобный способ считать размеры элементов */
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif; /* какой шрифт использовать */
-  background-color: #1a1a1a; /* тёмный фон — премиальная, "королевская" атмосфера */
-  color: #f0e6d2; /* светлый тёплый текст, хорошо читается на тёмном фоне */
-  line-height: 1.6; /* расстояние между строками текста */
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #000000;     /* чистый чёрный, как просили */
+  color: #f0e6d2;
+  line-height: 1.6;
+  overflow-x: hidden;             /* чтобы блики фона не вызывали горизонтальный скролл */
+  position: relative;
 }
 
-/* ===== ШАПКА ===== */
-.header {
-  background-color: #0d0d0d; /* почти чёрный — премиальный вид */
-  color: #d4af37; /* золотой цвет — под "королевскую" тему */
-  text-align: center;
-  padding: 60px 20px; /* отступ сверху/снизу 60px, слева/справа 20px */
-  border-bottom: 3px solid #d4af37; /* золотая полоса снизу шапки */
+/* ===== ДЕКОРАТИВНЫЙ ФОН: золотые/белые размытые "дымные" блики =====
+   position: fixed — блики остаются на месте при скролле страницы,
+   создавая ощущение общего фона у всего сайта */
+.bokeh {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);       /* сильное размытие — превращает круг в мягкое "облако" */
+  opacity: 0.35;
+  z-index: -1;               /* уводим за весь остальной контент */
+  animation: float 18s ease-in-out infinite; /* медленное покачивание */
 }
 
-.header h1 {
-  font-size: 48px;
-  margin-bottom: 10px;
+.bokeh-1 { width: 400px; height: 400px; background: #d4af37; top: -100px; left: -100px; }
+.bokeh-2 { width: 350px; height: 350px; background: #ffffff; top: 40%; right: -120px; animation-delay: 4s; }
+.bokeh-3 { width: 300px; height: 300px; background: #d4af37; bottom: -50px; left: 20%; animation-delay: 8s; }
+.bokeh-4 { width: 250px; height: 250px; background: #ffffff; bottom: 20%; right: 30%; animation-delay: 12s; }
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -40px); }
 }
 
-/* ===== СЕКЦИИ (общий стиль для всех блоков) ===== */
-section {
-  max-width: 700px;      /* не растягиваем текст на весь широкий экран */
-  margin: 0 auto;         /* центрируем блок по горизонтали */
-  padding: 40px 20px;
+/* ===== КАРТОЧКИ-ОСТРОВА ===== */
+.card {
+  background-color: #141414;   /* чуть светлее чёрного фона */
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  padding: 40px 30px;
+  margin: 30px auto;
+  max-width: 700px;
 }
 
 section h2 {
   font-size: 28px;
   color: #d4af37;
   margin-bottom: 20px;
-  border-bottom: 3px solid #d4af37; /* подчёркивание под заголовком */
+  border-bottom: 3px solid #d4af37;
   display: inline-block;
   padding-bottom: 5px;
 }
 
-/* ===== МЕНЮ ===== */
-.menu-list {
-  list-style: none; /* убираем стандартные точки у списка */
-}
-
-.menu-list li {
-  display: flex;              /* расставляем название и цену по краям */
+/* ===== ЗАКРЕПЛЁННАЯ НАВИГАЦИЯ ===== */
+.navbar {
+  position: sticky;      /* держит панель наверху при скролле */
+  top: 0;
+  z-index: 100;           /* поверх вообще всего на странице */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px dashed #555; /* пунктирная линия между блюдами, светлее под тёмный фон */
-  font-size: 18px;
+  gap: 12px;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px); /* лёгкое размытие того, что под панелью, при скролле */
+  padding: 14px 20px;
+  border-bottom: 2px solid #d4af37;
 }
 
-.item-name {
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: #ffffff;         /* белый текст, как просили */
+  text-decoration: none;
+  font-size: 15px;
   font-weight: 600;
+  transition: color 0.2s;
 }
 
-.item-price {
+.nav-links a:hover {
   color: #d4af37;
+}
+
+.nav-instagram {
+  font-size: 20px;
+}
+
+.lang-switch {
+  display: flex;
+  gap: 6px;
+}
+
+.lang-btn {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #ffffff;   /* чёрные кнопки с белой обводкой */
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 13px;
   font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-/* ===== ЧАСЫ РАБОТЫ И КОНТАКТЫ ===== */
-.hours, .contact {
-  background-color: #262626; /* чуть светлее основного фона — выделяет блок */
-  border-radius: 10px; /* скруглённые углы */
-  border: 1px solid #3a3a3a; /* тонкая рамка для объёма на тёмном фоне */
+.lang-btn.active, .lang-btn:hover {
+  background-color: #d4af37;
+  color: #0d0d0d;
+  border-color: #d4af37;
 }
 
-/* ===== ПОДВАЛ ===== */
-.footer {
-  text-align: center;
-  padding: 20px;
-  background-color: #0d0d0d;
-  color: #d4af37;
-  font-size: 14px;
-}
-
-/* ===== АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ ===== */
-/* Эти стили включаются, ТОЛЬКО когда экран уже 600px */
-@media (max-width: 600px) {
-  .header h1 {
-    font-size: 32px; /* на телефоне заголовок меньше */
-  }
-  section h2 {
-    font-size: 22px;
-  }
-}
-
-/* ===== ФОНОВОЕ ФОТО В ШАПКЕ (размытое) ===== */
+/* ===== ШАПКА: видео на фоне, размытое, ниже, рукописный заголовок ===== */
 .header {
   position: relative;
-  min-height: 100vh;           /* шапка на весь экран по высоте */
+  min-height: 55vh;      /* пониже, чем раньше */
   display: flex;
   align-items: center;
   justify-content: center;
- background-image: url('images/photo_2026-08-25_16-49-47.jpg');
-  background-size: cover;
-  background-position: center;
   overflow: hidden;
   border-bottom: 3px solid #d4af37;
-  padding: 0;
 }
 
-.header-overlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(13, 13, 13, 0.75); /* тёмная плёнка поверх фото для читаемости текста */
-  backdrop-filter: blur(6px);          /* само размытие фото */
-}
-
-.header-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  color: #d4af37;
-  padding: 20px;
-}
-
-/* ===== ОБЫЧНОЕ ФОТО В "О НАС" ===== */
-.about-photo {
-  display: block;
-  width: 100%;
-  max-width: 500px;
-  margin: 30px auto 0;
-  border-radius: 14px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.4);
-}
-/* ===== БЛОК "КАК НАС НАЙТИ" ===== */
-.map-wrapper {
-  position: relative;       /* нужно для overlay поверх карты */
-  display: block;
-  margin-top: 20px;
-  border-radius: 14px;
-  overflow: hidden;         /* обрезаем углы iframe по скруглению блока */
-  box-shadow: 0 10px 24px rgba(0,0,0,0.4);
-}
-
-.map-frame {
-  width: 100%;
-  height: 500px;   /* было 300px — сделали заметно больше */
-  border: 0;
-  display: block;
-}
-
-.map-click-overlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  cursor: pointer;          /* показываем "рука" при наведении, как у ссылки */
-}
-
-/* ===== БЛОК КНОПОК СВЯЗИ ===== */
-.contact-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.whatsapp {
-  background-color: #25D366; /* фирменный зелёный WhatsApp */
-  color: white;
-}
-
-.instagram {
-  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-  color: white;
-}
-/* Явный сброс стандартных стилей ссылки на всякий случай */
-.cta-button, .cta-button:visited, .cta-button:link {
-  color: inherit;           /* цвет текста берём из фона кнопки, а не синий по умолчанию */
-  text-decoration: none;
-}
 .header-video {
   position: absolute;
   top: 0; left: 0;
@@ -186,12 +137,269 @@ section h2 {
   filter: blur(4px);
   z-index: 0;
 }
-.promo-video {
-  width: 100%;
-  max-width: 400px;
+
+.header-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(13, 13, 13, 0.65);
+  z-index: 1;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #d4af37;
+  padding: 20px;
+}
+
+/* Рукописный шрифт, подключённый в <head> из Google Fonts */
+.brand-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 90px;
+  margin-bottom: 10px;
+  /* Анимация плавного появления при загрузке страницы */
+  animation: fadeInUp 1.4s ease-out;
+}
+
+.header-content p {
+  font-size: 20px;
+  animation: fadeInUp 1.8s ease-out; /* появляется чуть позже заголовка */
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== О НАС ===== */
+.about h2 {
+  font-size: 34px;
+}
+
+.about p {
+  font-size: 19px;
+}
+
+.about-video {
   display: block;
+  width: 100%;
+  max-width: 500px;
   margin: 20px auto 0;
   border-radius: 14px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.4);
-  transform: rotate(90deg);
+}
+
+/* ===== ГАЛЕРЕЯ (видео-карусель) ===== */
+.video-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.promo-video {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+  display: block;
+}
+
+.carousel-btn {
+  background-color: #d4af37;
+  color: #0d0d0d;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.carousel-btn:hover {
+  transform: scale(1.1);
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #555;
+  transition: background-color 0.2s;
+}
+
+.dot.active {
+  background-color: #d4af37;
+}
+
+/* ===== АВТО-КАРУСЕЛИ ФОТО (скидки + ярусы меню) ===== */
+.auto-carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;       /* позволяет и крутить руками, и через JS */
+  scroll-behavior: smooth;
+  margin-top: 20px;
+  padding-bottom: 10px;
+  /* Прячем полосу прокрутки, чтобы выглядело чище */
+  scrollbar-width: none;      /* Firefox */
+}
+
+.auto-carousel::-webkit-scrollbar {
+  display: none;               /* Chrome, Safari */
+}
+
+.carousel-img {
+  height: 260px;
+  width: auto;             /* фото разных пропорций — не растягиваем криво */
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  flex-shrink: 0;           /* фото не сжимаются, чтобы влезть */
+}
+
+/* ===== СКИДКИ ===== */
+.discounts h2 {
+  font-size: 30px;
+}
+
+/* ===== МЕНЮ: заголовок раздела + карточки-ярусы ===== */
+.menu-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px 0;
+  text-align: center;
+}
+
+.menu-main-title {
+  font-size: 40px;
+  color: #d4af37;
+  margin-bottom: 10px;
+}
+
+.menu-tier {
+  text-align: left;
+}
+
+.menu-tier h3 {
+  font-size: 24px;
+  color: #d4af37;
+}
+
+/* ===== КАК НАС НАЙТИ (КАРТА) ===== */
+.map-wrapper {
+  position: relative;
+  display: block;
+  margin-top: 20px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+}
+
+.map-frame {
+  width: 100%;
+  height: 500px;
+  border: 0;
+  display: block;
+}
+
+.map-click-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  cursor: pointer;
+}
+
+/* ===== КАРЬЕРА ===== */
+.career p {
+  font-size: 18px;
+}
+
+/* ===== КОНТАКТЫ ===== */
+.contact-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cta-button, .cta-button:visited, .cta-button:link {
+  display: inline-block;
+  padding: 14px 32px;
+  background-color: #d4af37;
+  color: #0d0d0d;
+  font-weight: bold;
+  font-size: 18px;
+  text-decoration: none;
+  border-radius: 30px;
+  transition: transform 0.2s;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+}
+
+.whatsapp {
+  background-color: #25D366;
+  color: white;
+}
+
+.instagram {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: white;
+}
+
+/* ===== ПОДВАЛ ===== */
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #0d0d0d;
+  color: #d4af37;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ ===== */
+@media (max-width: 600px) {
+  .brand-title {
+    font-size: 56px;
+  }
+  section h2, .card h2 {
+    font-size: 22px;
+  }
+  .menu-main-title {
+    font-size: 30px;
+  }
+  .nav-links {
+    justify-content: center;
+    font-size: 13px;
+  }
+  .video-carousel {
+    gap: 6px;
+  }
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+  .carousel-img {
+    height: 180px;
+  }
 }
