@@ -7,7 +7,7 @@
   <!-- Подключаем рукописный шрифт с Google Fonts для заголовка шапки -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
@@ -55,7 +55,7 @@
     </video>
     <div class="header-overlay"></div>
     <div class="header-content">
-      <h1 class="brand-title">King Zone</h1>
+      <h1 class="brand-title" id="brandTitle">King Zone</h1>
       <p>Real Taste. Real Quality. Real King Zone.</p>
     </div>
   </header>
@@ -209,6 +209,23 @@
   </footer>
 
   <script>
+    /* ===== ПОБУКВЕННАЯ АНИМАЦИЯ ЗАГОЛОВКА "King Zone" =====
+       Разбиваем текст на отдельные буквы, каждая — свой <span>,
+       и каждой задаём небольшую задержку появления — получается
+       эффект "надпись пишется", а не просто вся сразу проявляется. */
+    (function animateBrandTitle() {
+      const title = document.getElementById('brandTitle');
+      const text = title.textContent;
+      title.textContent = ''; // очищаем, будем собирать заново из букв
+      text.split('').forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char === ' ' ? '\u00A0' : char; // неразрывный пробел, чтобы не схлопывался
+        span.style.animationDelay = (i * 0.08) + 's'; // каждая следующая буква чуть позже
+        span.classList.add('letter');
+        title.appendChild(span);
+      });
+    })();
+
     /* ===== КАРУСЕЛЬ ВИДЕО В ГАЛЕРЕЕ ===== */
     const videos = [
       "promo.mp4/IMG_2951.mp4",
@@ -229,63 +246,61 @@
     }
 
     /* ===== АВТО-КАРУСЕЛИ ФОТО (скидки + 3 яруса меню) =====
-       - Бесшовный бесконечный цикл (дублируем фото внутри карусели)
-       - Крутится сама, пока её не трогают
-       - Можно тащить мышкой (drag) или пальцем (обычный swipe)
-       - Клик по фото (без перетаскивания) открывает лайтбокс */
+       try/catch вокруг каждой — если одна карусель сломается,
+       остальные всё равно продолжат работать нормально */
     document.querySelectorAll('.auto-carousel').forEach(carousel => {
-      // Дублируем все фото ещё один раз в конец — так при "перемотке назад
-      // на старт" зритель уже видит те же картинки, и переход незаметен
-      const originalHTML = carousel.innerHTML;
-      carousel.innerHTML = originalHTML + originalHTML;
+      try {
+        const originalHTML = carousel.innerHTML;
+        carousel.innerHTML = originalHTML + originalHTML; // дублируем для бесшовного цикла
 
-      let paused = false;
-      let isDragging = false;
-      let dragStartX = 0;
-      let dragStartScroll = 0;
-      let dragMoved = 0; // сколько всего пикселей утащили — отличаем клик от перетаскивания
+        let paused = false;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartScroll = 0;
+        let dragMoved = 0;
 
-      // Половина общей ширины — это ширина ОДНОГО набора фото (до дублирования)
-      const halfWidth = () => carousel.scrollWidth / 2;
+        setInterval(() => {
+          if (paused || isDragging) return;
+          // Если фото ещё не загрузились или их мало — крутить нечего, пропускаем тик
+          const half = carousel.scrollWidth / 2;
+          if (half <= carousel.clientWidth) return;
 
-      // Авто-прокрутка
-      setInterval(() => {
-        if (paused || isDragging) return;
-        carousel.scrollLeft += 1;
-        if (carousel.scrollLeft >= halfWidth()) {
-          carousel.scrollLeft -= halfWidth(); // "перескакиваем" на дубликат — незаметно
-        }
-      }, 20);
+          carousel.scrollLeft += 1;
+          if (carousel.scrollLeft >= half) {
+            carousel.scrollLeft -= half;
+          }
+        }, 20);
 
-      // Наведение мышки — останавливаем на время
-      carousel.addEventListener('mouseenter', () => paused = true);
-      carousel.addEventListener('mouseleave', () => { paused = false; isDragging = false; });
+        carousel.addEventListener('mouseenter', () => paused = true);
+        carousel.addEventListener('mouseleave', () => { paused = false; isDragging = false; });
 
-      // Перетаскивание мышкой (desktop)
-      carousel.addEventListener('mousedown', e => {
-        isDragging = true;
-        dragMoved = 0;
-        dragStartX = e.pageX;
-        dragStartScroll = carousel.scrollLeft;
-        carousel.style.cursor = 'grabbing';
-      });
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-        carousel.style.cursor = 'grab';
-      });
-      carousel.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        const delta = e.pageX - dragStartX;
-        dragMoved = Math.abs(delta);
-        carousel.scrollLeft = dragStartScroll - delta;
-      });
-
-      // Клик по фото — если почти не тащили (меньше 5px), считаем это кликом
-      carousel.querySelectorAll('.carousel-img').forEach(img => {
-        img.addEventListener('click', () => {
-          if (dragMoved < 5) openLightbox(img.src);
+        carousel.addEventListener('mousedown', e => {
+          isDragging = true;
+          dragMoved = 0;
+          dragStartX = e.pageX;
+          dragStartScroll = carousel.scrollLeft;
+          carousel.style.cursor = 'grabbing';
         });
-      });
+        window.addEventListener('mouseup', () => {
+          isDragging = false;
+          carousel.style.cursor = 'grab';
+        });
+        carousel.addEventListener('mousemove', e => {
+          if (!isDragging) return;
+          const delta = e.pageX - dragStartX;
+          dragMoved = Math.abs(delta);
+          carousel.scrollLeft = dragStartScroll - delta;
+        });
+
+        carousel.querySelectorAll('.carousel-img').forEach(img => {
+          img.addEventListener('click', () => {
+            if (dragMoved < 5) openLightbox(img.src);
+          });
+        });
+      } catch (err) {
+        console.error('Ошибка в карусели:', err);
+        // Ошибка в ОДНОЙ карусели не мешает работе остальных
+      }
     });
 
     /* ===== ЛАЙТБОКС: открыть/закрыть крупное фото ===== */
