@@ -10,15 +10,16 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
 
   <!-- ===== ДЕКОРАТИВНЫЙ ФОН: золотые/белые размытые блики по всему сайту =====
        position: fixed — держит их на месте, даже когда страница скроллится -->
-  <div class="bokeh bokeh-1"></div>
-  <div class="bokeh bokeh-2"></div>
-  <div class="bokeh bokeh-3"></div>
-  <div class="bokeh bokeh-4"></div>
+  <div class="bokeh bokeh-gold bokeh-1"></div>
+  <div class="bokeh bokeh-smoke bokeh-2"></div>
+  <div class="bokeh bokeh-gold bokeh-3"></div>
+  <div class="bokeh bokeh-smoke bokeh-4"></div>
+  <div class="bokeh bokeh-gold bokeh-5"></div>
+  <div class="bokeh bokeh-smoke bokeh-6"></div>
 
   <!-- ===== ЗАКРЕПЛЁННАЯ НАВИГАЦИЯ ===== -->
   <nav class="navbar">
@@ -29,7 +30,15 @@
       <a href="#menu" data-i18n="nav-menu">Menü</a>
       <a href="#find-us" data-i18n="nav-find">Wo wir sind</a>
       <a href="#career" data-i18n="nav-career">Karriere</a>
-      <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="nav-instagram" aria-label="Instagram">📷</a>
+      <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="nav-instagram" aria-label="Instagram">
+        <!-- SVG — векторная иконка, рисуется кодом, а не картинкой-файлом,
+             поэтому всегда чёткая на любом размере экрана -->
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="20" rx="6"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
     </div>
     <div class="lang-switch">
       <button onclick="setLanguage('de')" class="lang-btn active" data-lang="de">DE</button>
@@ -175,9 +184,24 @@
     <div class="contact-buttons">
       <a href="tel:+498974493013" class="cta-button">📞 089 74493013</a>
       <a href="https://wa.me/48795070938" target="_blank" class="cta-button whatsapp">💬 WhatsApp</a>
-      <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="cta-button instagram">📷 Instagram</a>
+      <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="cta-button instagram">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -3px; margin-right: 4px;">
+          <rect x="2" y="2" width="20" height="20" rx="6"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+        Instagram
+      </a>
     </div>
   </section>
+
+  <!-- ===== ЛАЙТБОКС: окно для просмотра фото крупно =====
+       По умолчанию скрыт (class="lightbox" без "active"),
+       JS добавляет класс "active", когда кликаешь по фото в карусели -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img src="" alt="" class="lightbox-img" id="lightboxImg">
+  </div>
 
   <!-- ===== ПОДВАЛ ===== -->
   <footer class="footer">
@@ -205,25 +229,73 @@
     }
 
     /* ===== АВТО-КАРУСЕЛИ ФОТО (скидки + 3 яруса меню) =====
-       Едут сами вправо, останавливаются пока палец/мышь на них,
-       и их всегда можно докрутить руками (обычный scroll) */
+       - Бесшовный бесконечный цикл (дублируем фото внутри карусели)
+       - Крутится сама, пока её не трогают
+       - Можно тащить мышкой (drag) или пальцем (обычный swipe)
+       - Клик по фото (без перетаскивания) открывает лайтбокс */
     document.querySelectorAll('.auto-carousel').forEach(carousel => {
-      let paused = false;
+      // Дублируем все фото ещё один раз в конец — так при "перемотке назад
+      // на старт" зритель уже видит те же картинки, и переход незаметен
+      const originalHTML = carousel.innerHTML;
+      carousel.innerHTML = originalHTML + originalHTML;
 
+      let paused = false;
+      let isDragging = false;
+      let dragStartX = 0;
+      let dragStartScroll = 0;
+      let dragMoved = 0; // сколько всего пикселей утащили — отличаем клик от перетаскивания
+
+      // Половина общей ширины — это ширина ОДНОГО набора фото (до дублирования)
+      const halfWidth = () => carousel.scrollWidth / 2;
+
+      // Авто-прокрутка
       setInterval(() => {
-        if (paused) return;
+        if (paused || isDragging) return;
         carousel.scrollLeft += 1;
-        // Если доехали до конца — начинаем сначала (создаёт эффект бесконечной ленты)
-        if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth) {
-          carousel.scrollLeft = 0;
+        if (carousel.scrollLeft >= halfWidth()) {
+          carousel.scrollLeft -= halfWidth(); // "перескакиваем" на дубликат — незаметно
         }
       }, 20);
 
+      // Наведение мышки — останавливаем на время
       carousel.addEventListener('mouseenter', () => paused = true);
-      carousel.addEventListener('mouseleave', () => paused = false);
-      carousel.addEventListener('touchstart', () => paused = true);
-      carousel.addEventListener('touchend', () => paused = false);
+      carousel.addEventListener('mouseleave', () => { paused = false; isDragging = false; });
+
+      // Перетаскивание мышкой (desktop)
+      carousel.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragMoved = 0;
+        dragStartX = e.pageX;
+        dragStartScroll = carousel.scrollLeft;
+        carousel.style.cursor = 'grabbing';
+      });
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        carousel.style.cursor = 'grab';
+      });
+      carousel.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const delta = e.pageX - dragStartX;
+        dragMoved = Math.abs(delta);
+        carousel.scrollLeft = dragStartScroll - delta;
+      });
+
+      // Клик по фото — если почти не тащили (меньше 5px), считаем это кликом
+      carousel.querySelectorAll('.carousel-img').forEach(img => {
+        img.addEventListener('click', () => {
+          if (dragMoved < 5) openLightbox(img.src);
+        });
+      });
     });
+
+    /* ===== ЛАЙТБОКС: открыть/закрыть крупное фото ===== */
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
 
     /* ===== ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА =====
        translations — "словарь": для каждого ключа (data-i18n) есть
