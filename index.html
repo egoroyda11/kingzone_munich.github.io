@@ -4,22 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>King Zone Burger München</title>
-  <!-- Подключаем рукописный шрифт с Google Fonts для заголовка шапки -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
 
-  <!-- ===== ДЕКОРАТИВНЫЙ ФОН: золотые/белые размытые блики по всему сайту =====
-       position: fixed — держит их на месте, даже когда страница скроллится -->
+  <!-- ===== ЗОЛОТАЯ МЕРЦАЮЩАЯ РАМКА ВСЕГО САЙТА ===== -->
+  <div class="gold-border-frame"></div>
+
+  <!-- ===== ФОНОВЫЕ БЛИКИ: теперь absolute — двигаются вместе со скроллом ===== -->
   <div class="bokeh bokeh-gold bokeh-1"></div>
   <div class="bokeh bokeh-smoke bokeh-2"></div>
   <div class="bokeh bokeh-gold bokeh-3"></div>
   <div class="bokeh bokeh-smoke bokeh-4"></div>
   <div class="bokeh bokeh-gold bokeh-5"></div>
   <div class="bokeh bokeh-smoke bokeh-6"></div>
+
+  <!-- ===== ПЛАВАЮЩИЕ ЗОЛОТЫЕ ЧАСТИЦЫ (генерируются JS ниже) ===== -->
+  <div class="particles" id="particles"></div>
 
   <!-- ===== ЗАКРЕПЛЁННАЯ НАВИГАЦИЯ ===== -->
   <nav class="navbar">
@@ -31,8 +35,6 @@
       <a href="#find-us" data-i18n="nav-find">Wo wir sind</a>
       <a href="#career" data-i18n="nav-career">Karriere</a>
       <a href="https://www.instagram.com/kingzone_munich" target="_blank" class="nav-instagram" aria-label="Instagram">
-        <!-- SVG — векторная иконка, рисуется кодом, а не картинкой-файлом,
-             поэтому всегда чёткая на любом размере экрана -->
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="2" width="20" height="20" rx="6"/>
           <circle cx="12" cy="12" r="5"/>
@@ -48,14 +50,17 @@
     </div>
   </nav>
 
-  <!-- ===== ШАПКА: видео на фоне, размытое, рукописный заголовок с анимацией ===== -->
+  <!-- ===== ШАПКА: видео с параллаксом, заголовок "пишется от руки" ===== -->
   <header class="header">
-    <video autoplay muted loop playsinline class="header-video">
+    <video autoplay muted loop playsinline class="header-video" id="headerVideo">
       <source src="promo.mp4/IMG_2921.mp4" type="video/mp4">
     </video>
     <div class="header-overlay"></div>
     <div class="header-content">
-      <h1 class="brand-title" id="brandTitle">King Zone</h1>
+      <div class="brand-title-wrapper">
+        <h1 class="brand-title" id="brandTitle">King Zone</h1>
+        <span class="pen-tip" id="penTip">🖋️</span>
+      </div>
       <p>Real Taste. Real Quality. Real King Zone.</p>
     </div>
   </header>
@@ -74,6 +79,15 @@
     <video autoplay muted loop playsinline class="about-video">
       <source src="promo.mp4/IMG_2921.mp4" type="video/mp4">
     </video>
+  </section>
+
+  <!-- ===== СЧЁТЧИК БУРГЕРОВ (игривая пауза) ===== -->
+  <section class="burger-counter card">
+    <div class="counter-display">
+      <span class="burger-icon">🍔</span>
+      <span class="counter-number" id="burgerCounter">0</span>
+    </div>
+    <div class="counter-fail" id="counterFail">❌❌❌</div>
   </section>
 
   <!-- ===== ГАЛЕРЕЯ (видео-карусель) ===== -->
@@ -96,57 +110,83 @@
   <!-- ===== СКИДКИ ===== -->
   <section id="discounts" class="discounts card">
     <h2 data-i18n="discounts-heading">Rabatte</h2>
-    <!-- На самих фото уже всё написано — просто показываем их каруселью -->
-    <div class="auto-carousel">
-      <img src="images/photo_2026-08-27_22-09-55.jpg" alt="Rabatt" class="carousel-img">
-      <img src="images/photo_2026-08-27_22-09-57.jpg" alt="Rabatt" class="carousel-img">
+    <div class="carousel-frame">
+      <button class="carousel-arrow prev" onclick="scrollCarousel(this)">‹</button>
+      <div class="auto-carousel">
+        <img src="images/photo_2026-08-27_22-09-55.jpg" alt="Rabatt" class="carousel-img">
+        <img src="images/photo_2026-08-27_22-09-57.jpg" alt="Rabatt" class="carousel-img">
+      </div>
+      <button class="carousel-arrow next" onclick="scrollCarousel(this)">›</button>
     </div>
   </section>
 
-  <!-- ===== МЕНЮ: 3 яруса, у каждого своя карусель фото ===== -->
+  <!-- ===== РЕКОМЕНДУЕМ (хайлайт-блюда) ===== -->
+  <section id="special" class="special card">
+    <h2 data-i18n="special-heading">Empfehlungen</h2>
+    <div class="special-grid">
+      <!-- Главный, крупный тайл — тому фото уделяем больше всего внимания -->
+      <img src="images/photo_2026-08-27_22-09-43.jpg" alt="Empfehlung" class="special-img special-featured" onclick="openLightbox(this.src)">
+      <img src="images/photo_2026-08-27_22-09-27.jpg" alt="Empfehlung" class="special-img" onclick="openLightbox(this.src)">
+      <img src="images/photo_2026-08-27_22-09-34.jpg" alt="Empfehlung" class="special-img" onclick="openLightbox(this.src)">
+      <img src="images/photo_2026-08-27_22-09-41.jpg" alt="Empfehlung" class="special-img" onclick="openLightbox(this.src)">
+      <img src="images/photo_2026-08-27_22-09-51.jpg" alt="Empfehlung" class="special-img" onclick="openLightbox(this.src)">
+      <img src="images/photo_2026-08-27_22-09-53.jpg" alt="Empfehlung" class="special-img" onclick="openLightbox(this.src)">
+    </div>
+  </section>
+
+  <!-- ===== МЕНЮ: 3 яруса со стрелками ===== -->
   <section id="menu" class="menu-wrapper">
     <h2 class="menu-main-title" data-i18n="menu-heading">Menü</h2>
 
-    <!-- ЯРУС 1: БУРГЕРЫ -->
     <div class="menu-tier card">
       <h3 data-i18n="menu-cat-burgers">Burger</h3>
-      <div class="auto-carousel">
-        <img src="images/photo_2026-08-27_22-09-10.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-21.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-06.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-36.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-23.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-14.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-27.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-25.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-30.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-09.jpg" alt="Burger" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-12.jpg" alt="Burger" class="carousel-img">
+      <div class="carousel-frame">
+        <button class="carousel-arrow prev" onclick="scrollCarousel(this)">‹</button>
+        <div class="auto-carousel">
+          <img src="images/photo_2026-08-27_22-09-10.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-21.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-06.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-36.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-23.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-14.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-27.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-25.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-30.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-09.jpg" alt="Burger" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-12.jpg" alt="Burger" class="carousel-img">
+        </div>
+        <button class="carousel-arrow next" onclick="scrollCarousel(this)">›</button>
       </div>
     </div>
 
-    <!-- ЯРУС 2: СЭНДВИЧИ И ЛАВАШИ -->
     <div class="menu-tier card">
       <h3 data-i18n="menu-cat-sandwiches">Sandwiches & Lavash</h3>
-      <div class="auto-carousel">
-        <img src="images/photo_2026-08-27_22-09-43.jpg" alt="Lavash" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-39.jpg" alt="Lavash" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-32.jpg" alt="Lavash" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-34.jpg" alt="Lavash" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-41.jpg" alt="Lavash" class="carousel-img">
+      <div class="carousel-frame">
+        <button class="carousel-arrow prev" onclick="scrollCarousel(this)">‹</button>
+        <div class="auto-carousel">
+          <img src="images/photo_2026-08-27_22-09-43.jpg" alt="Lavash" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-39.jpg" alt="Lavash" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-32.jpg" alt="Lavash" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-34.jpg" alt="Lavash" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-41.jpg" alt="Lavash" class="carousel-img">
+        </div>
+        <button class="carousel-arrow next" onclick="scrollCarousel(this)">›</button>
       </div>
     </div>
 
-    <!-- ЯРУС 3: ЗАКУСКИ -->
     <div class="menu-tier card">
       <h3 data-i18n="menu-cat-snacks">Snacks</h3>
-      <div class="auto-carousel">
-        <img src="images/photo_2026-08-27_22-09-48.jpg" alt="Snack" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-46.jpg" alt="Snack" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-50.jpg" alt="Snack" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-44.jpg" alt="Snack" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-51.jpg" alt="Snack" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-53.jpg" alt="Snack" class="carousel-img">
+      <div class="carousel-frame">
+        <button class="carousel-arrow prev" onclick="scrollCarousel(this)">‹</button>
+        <div class="auto-carousel">
+          <img src="images/photo_2026-08-27_22-09-48.jpg" alt="Snack" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-46.jpg" alt="Snack" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-50.jpg" alt="Snack" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-44.jpg" alt="Snack" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-51.jpg" alt="Snack" class="carousel-img">
+          <img src="images/photo_2026-08-27_22-09-53.jpg" alt="Snack" class="carousel-img">
+        </div>
+        <button class="carousel-arrow next" onclick="scrollCarousel(this)">›</button>
       </div>
     </div>
   </section>
@@ -195,36 +235,35 @@
     </div>
   </section>
 
-  <!-- ===== ЛАЙТБОКС: окно для просмотра фото крупно =====
-       По умолчанию скрыт (class="lightbox" без "active"),
-       JS добавляет класс "active", когда кликаешь по фото в карусели -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close">&times;</span>
-    <img src="" alt="" class="lightbox-img" id="lightboxImg">
-  </div>
+  <!-- ===== ПЛАВАЮЩАЯ КНОПКА "ЗАКАЗАТЬ" ===== -->
+  <a href="https://wa.me/48795070938" target="_blank" class="floating-order-btn" data-i18n="order-btn">Bestellen</a>
 
   <!-- ===== ПОДВАЛ ===== -->
   <footer class="footer">
     <p>&copy; 2026 King Zone. Alle Rechte vorbehalten.</p>
   </footer>
 
+  <!-- ===== ЛАЙТБОКС ===== -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img src="" alt="" class="lightbox-img" id="lightboxImg">
+  </div>
+
   <script>
-    /* ===== ПОБУКВЕННАЯ АНИМАЦИЯ ЗАГОЛОВКА "King Zone" =====
-       Разбиваем текст на отдельные буквы, каждая — свой <span>,
-       и каждой задаём небольшую задержку появления — получается
-       эффект "надпись пишется", а не просто вся сразу проявляется. */
-    (function animateBrandTitle() {
+    /* ===== ПОБУКВЕННАЯ/"РУЧНАЯ" АНИМАЦИЯ ЗАГОЛОВКА =====
+       Используем clip-path: он "открывает" текст слева направо,
+       как будто его дорисовывают — а не просто проявляет весь сразу.
+       "Перо" (emoji) едет синхронно поверх текста той же анимацией. */
+    function animateBrandTitle() {
       const title = document.getElementById('brandTitle');
-      const text = title.textContent;
-      title.textContent = ''; // очищаем, будем собирать заново из букв
-      text.split('').forEach((char, i) => {
-        const span = document.createElement('span');
-        span.textContent = char === ' ' ? '\u00A0' : char; // неразрывный пробел, чтобы не схлопывался
-        span.style.animationDelay = (i * 0.08) + 's'; // каждая следующая буква чуть позже
-        span.classList.add('letter');
-        title.appendChild(span);
-      });
-    })();
+      const pen = document.getElementById('penTip');
+      // Сбрасываем анимацию (иначе повторный запуск не сработает в некоторых браузерах)
+      title.style.animation = 'none';
+      pen.style.animation = 'none';
+      void title.offsetWidth; // хитрость: заставляет браузер "забыть" прошлую анимацию
+      title.style.animation = 'writeReveal 2.2s ease forwards';
+      pen.style.animation = 'penMove 2.2s ease forwards';
+    }
 
     /* ===== КАРУСЕЛЬ ВИДЕО В ГАЛЕРЕЕ ===== */
     const videos = [
@@ -245,13 +284,21 @@
       });
     }
 
-    /* ===== АВТО-КАРУСЕЛИ ФОТО (скидки + 3 яруса меню) =====
-       try/catch вокруг каждой — если одна карусель сломается,
-       остальные всё равно продолжат работать нормально */
+    /* ===== СТРЕЛКИ У ФОТО-КАРУСЕЛЕЙ =====
+       "this" — сама кнопка, которую нажали; ищем её "соседа" .auto-carousel
+       внутри общего родителя .carousel-frame */
+    function scrollCarousel(button) {
+      const frame = button.closest('.carousel-frame');
+      const track = frame.querySelector('.auto-carousel');
+      const direction = button.classList.contains('next') ? 1 : -1;
+      track.scrollBy({ left: direction * 300, behavior: 'smooth' });
+    }
+
+    /* ===== АВТО-КАРУСЕЛИ ФОТО ===== */
     document.querySelectorAll('.auto-carousel').forEach(carousel => {
       try {
         const originalHTML = carousel.innerHTML;
-        carousel.innerHTML = originalHTML + originalHTML; // дублируем для бесшовного цикла
+        carousel.innerHTML = originalHTML + originalHTML;
 
         let paused = false;
         let isDragging = false;
@@ -261,19 +308,17 @@
 
         setInterval(() => {
           if (paused || isDragging) return;
-          // Если фото ещё не загрузились или их мало — крутить нечего, пропускаем тик
           const half = carousel.scrollWidth / 2;
           if (half <= carousel.clientWidth) return;
-
           carousel.scrollLeft += 1;
           if (carousel.scrollLeft >= half) {
             carousel.scrollLeft -= half;
           }
         }, 20);
 
+        // Мышь: наведение и перетаскивание
         carousel.addEventListener('mouseenter', () => paused = true);
         carousel.addEventListener('mouseleave', () => { paused = false; isDragging = false; });
-
         carousel.addEventListener('mousedown', e => {
           isDragging = true;
           dragMoved = 0;
@@ -292,6 +337,17 @@
           carousel.scrollLeft = dragStartScroll - delta;
         });
 
+        // Палец (телефон): та же логика паузы, чтобы не "боролись" авто-скролл и палец
+        carousel.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+        carousel.addEventListener('touchend', () => { paused = false; }, { passive: true });
+
+        // Колёсико мыши — крутим карусель по горизонтали
+        carousel.addEventListener('wheel', e => {
+          e.preventDefault();
+          carousel.scrollLeft += e.deltaY;
+        }, { passive: false });
+
+        // Клик по фото — если почти не тащили, открываем лайтбокс
         carousel.querySelectorAll('.carousel-img').forEach(img => {
           img.addEventListener('click', () => {
             if (dragMoved < 5) openLightbox(img.src);
@@ -299,11 +355,10 @@
         });
       } catch (err) {
         console.error('Ошибка в карусели:', err);
-        // Ошибка в ОДНОЙ карусели не мешает работе остальных
       }
     });
 
-    /* ===== ЛАЙТБОКС: открыть/закрыть крупное фото ===== */
+    /* ===== ЛАЙТБОКС ===== */
     function openLightbox(src) {
       document.getElementById('lightboxImg').src = src;
       document.getElementById('lightbox').classList.add('active');
@@ -312,9 +367,64 @@
       document.getElementById('lightbox').classList.remove('active');
     }
 
-    /* ===== ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА =====
-       translations — "словарь": для каждого ключа (data-i18n) есть
-       перевод на 4 языка. setLanguage меняет текст всех элементов сразу. */
+    /* ===== СЧЁТЧИК БУРГЕРОВ (игривый цикл) =====
+       Считает быстро от 0 до ~9999, замирает, "падает" тремя крестиками,
+       и через несколько секунд начинает заново. */
+    function runBurgerCounter() {
+      const counterEl = document.getElementById('burgerCounter');
+      const failEl = document.getElementById('counterFail');
+      failEl.classList.remove('show');
+
+      let count = 0;
+      const target = 9999;
+      const step = Math.ceil(target / 120); // ~120 шагов до конца — быстрый, но плавный подсчёт
+
+      const countInterval = setInterval(() => {
+        count += step;
+        if (count >= target) {
+          count = target;
+          clearInterval(countInterval);
+          counterEl.textContent = count;
+          // Пауза перед "неудачей", чтобы число успело показаться
+          setTimeout(() => {
+            failEl.classList.add('show'); // показываем мигающие крестики
+            setTimeout(() => {
+              runBurgerCounter(); // начинаем цикл заново
+            }, 4500); // крестики видны 4.5 секунды
+          }, 600);
+        } else {
+          counterEl.textContent = count;
+        }
+      }, 20);
+    }
+
+    /* ===== ПЛАВАЮЩИЕ ЗОЛОТЫЕ ЧАСТИЦЫ =====
+       Создаём N маленьких div'ов со случайной позицией/скоростью —
+       CSS-анимация плавно поднимает их вверх и вверх, зацикленно */
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const count = 25;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDuration = (8 + Math.random() * 10) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+        container.appendChild(p);
+      }
+    }
+
+    /* ===== ПАРАЛЛАКС ВИДЕО В ШАПКЕ =====
+       Видео едет чуть медленнее остального контента при скролле —
+       создаёт ощущение глубины (эффект "объёма") */
+    window.addEventListener('scroll', () => {
+      const headerVideo = document.getElementById('headerVideo');
+      const offset = window.scrollY * 0.4; // 0.4 — множитель скорости параллакса
+      headerVideo.style.transform = `translateY(${offset}px)`;
+    });
+
+    /* ===== ПЕРЕКЛЮЧЕНИЕ ЯЗЫКА ===== */
     const translations = {
       de: {
         "nav-about": "Über uns", "nav-gallery": "Galerie", "nav-discounts": "Rabatte",
@@ -323,6 +433,7 @@
         "about-text": "Bei King Zone verwandeln wir jeden Burger in ein kleines Erlebnis. Wir sind ein neues Konzept in München — mit eigens entwickelten Signature-Rezepten, die man sonst nirgends findet. Jeder Burger, jedes Sandwich und jede Sauce ist hausgemacht, nach unseren eigenen Ideen, ohne Kompromisse bei der Qualität. Frisch gepresstes Smash-Beef, geröstete Brioche-Buns und ein Team, das mit echter Leidenschaft kocht — das ist King Zone.",
         "gallery-heading": "Galerie",
         "discounts-heading": "Rabatte",
+        "special-heading": "Empfehlungen",
         "menu-heading": "Menü",
         "menu-cat-burgers": "Burger",
         "menu-cat-sandwiches": "Sandwiches & Lavash",
@@ -331,7 +442,8 @@
         "find-text": "Wir befinden uns direkt an der Landsberger Straße, gut erreichbar mit Auto oder öffentlichen Verkehrsmitteln. Tippe auf die Karte, um die Route in Google Maps zu öffnen.",
         "career-heading": "Karriere",
         "career-text": "Werde Teil des King Zone Teams! Wir suchen motivierte Mitarbeiter, die mit Leidenschaft bei der Sache sind. Schreib uns einfach über WhatsApp oder Instagram.",
-        "contact-heading": "Kontakt"
+        "contact-heading": "Kontakt",
+        "order-btn": "Bestellen"
       },
       en: {
         "nav-about": "About us", "nav-gallery": "Gallery", "nav-discounts": "Discounts",
@@ -340,6 +452,7 @@
         "about-text": "At King Zone, we turn every burger into a little experience. We're a new concept in Munich — with signature recipes you won't find anywhere else. Every burger, sandwich, and sauce is handmade, following our own ideas, without compromising on quality. Freshly pressed smash beef, toasted brioche buns, and a team that cooks with real passion — that's King Zone.",
         "gallery-heading": "Gallery",
         "discounts-heading": "Discounts",
+        "special-heading": "Recommended",
         "menu-heading": "Menu",
         "menu-cat-burgers": "Burgers",
         "menu-cat-sandwiches": "Sandwiches & Lavash",
@@ -348,7 +461,8 @@
         "find-text": "We're located right on Landsberger Straße, easy to reach by car or public transport. Tap the map below to open directions in Google Maps.",
         "career-heading": "Careers",
         "career-text": "Join the King Zone team! We're looking for motivated people who bring real passion to the job. Just reach out via WhatsApp or Instagram.",
-        "contact-heading": "Contact us"
+        "contact-heading": "Contact us",
+        "order-btn": "Order now"
       },
       ru: {
         "nav-about": "О нас", "nav-gallery": "Галерея", "nav-discounts": "Скидки",
@@ -357,6 +471,7 @@
         "about-text": "В King Zone мы превращаем каждый бургер в маленькое приключение. Мы — новая концепция в Мюнхене, с авторскими рецептами, которых больше нигде не найти. Каждый бургер, сэндвич и соус готовится вручную, по нашим собственным идеям, без компромиссов в качестве. Свежая смэш-говядина, поджаренные брioш-булочки и команда, которая готовит с настоящей страстью — это King Zone.",
         "gallery-heading": "Галерея",
         "discounts-heading": "Скидки",
+        "special-heading": "Рекомендуем",
         "menu-heading": "Меню",
         "menu-cat-burgers": "Бургеры",
         "menu-cat-sandwiches": "Сэндвичи и лаваши",
@@ -365,7 +480,8 @@
         "find-text": "Мы находимся прямо на Ландсбергер штрассе, легко добраться на машине или общественным транспортом. Нажми на карту, чтобы открыть маршрут в Google Maps.",
         "career-heading": "Работа",
         "career-text": "Присоединяйся к команде King Zone! Мы ищем мотивированных сотрудников, которые горят своим делом. Просто напиши нам в WhatsApp или Instagram.",
-        "contact-heading": "Контакты"
+        "contact-heading": "Контакты",
+        "order-btn": "Заказать"
       },
       uk: {
         "nav-about": "Про нас", "nav-gallery": "Галерея", "nav-discounts": "Знижки",
@@ -374,6 +490,7 @@
         "about-text": "У King Zone ми перетворюємо кожен бургер на маленьку пригоду. Ми — нова концепція в Мюнхені, з авторськими рецептами, яких більше ніде не знайти. Кожен бургер, сендвіч і соус готується вручну, за нашими власними ідеями, без жодних компромісів у якості. Свіжа смэш-яловичина, підсмажені булочки бріош і команда, яка готує зі справжньою пристрастю — це King Zone.",
         "gallery-heading": "Галерея",
         "discounts-heading": "Знижки",
+        "special-heading": "Рекомендуємо",
         "menu-heading": "Меню",
         "menu-cat-burgers": "Бургери",
         "menu-cat-sandwiches": "Сендвічі та лаваші",
@@ -382,24 +499,29 @@
         "find-text": "Ми знаходимось прямо на Ландсбергер штрассе, легко дістатися на машині або громадським транспортом. Натисни на карту, щоб відкрити маршрут у Google Maps.",
         "career-heading": "Робота",
         "career-text": "Приєднуйся до команди King Zone! Ми шукаємо мотивованих співробітників, які горять своєю справою. Просто напиши нам у WhatsApp або Instagram.",
-        "contact-heading": "Контакти"
+        "contact-heading": "Контакти",
+        "order-btn": "Замовити"
       }
     };
 
     function setLanguage(lang) {
-      // Проходим по всем элементам с data-i18n и меняем текст на нужный язык
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
           el.textContent = translations[lang][key];
         }
       });
-      // Подсвечиваем активную кнопку языка
       document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
       });
       document.documentElement.lang = lang;
+      animateBrandTitle(); // перезапускаем "написание" заголовка при смене языка
     }
+
+    /* ===== ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ===== */
+    animateBrandTitle();
+    runBurgerCounter();
+    createParticles();
   </script>
 
 </body>

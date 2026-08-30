@@ -5,65 +5,108 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth; /* плавный скролл к разделам при клике в навигации */
+}
+
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
-  background-color: #000000;     /* чистый чёрный, как просили */
+  background-color: #000000;
   color: #f0e6d2;
   line-height: 1.6;
-  overflow-x: hidden;             /* чтобы блики фона не вызывали горизонтальный скролл */
+  overflow-x: hidden;
   position: relative;
 }
 
-/* ===== ДЕКОРАТИВНЫЙ ФОН: золотые/белые размытые "дымные" блики =====
-   position: fixed — блики остаются на месте при скролле страницы,
-   создавая ощущение общего фона у всего сайта */
-.bokeh {
-  position: fixed;
-  z-index: -1;
-  opacity: 0;                 /* начинают невидимыми — "появляются" сами через анимацию */
+/* ===== ЗОЛОТАЯ МЕРЦАЮЩАЯ РАМКА ВСЕГО САЙТА ===== */
+.gold-border-frame {
+  position: fixed;    /* эта рамка остаётся у краёв ЭКРАНА, а не страницы — так и задумано */
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 2px solid #d4af37;
+  pointer-events: none;  /* не мешает кликать на то, что "под" рамкой */
+  z-index: 200;
+  animation: shimmerBorder 3s ease-in-out infinite;
 }
 
-/* Золотые блики — более чёткая круглая форма, ярче, по разным сторонам */
+@keyframes shimmerBorder {
+  0%, 100% { opacity: 0.4; box-shadow: 0 0 15px rgba(212,175,55,0.3) inset; }
+  50% { opacity: 0.9; box-shadow: 0 0 25px rgba(212,175,55,0.6) inset; }
+}
+
+/* ===== ФОНОВЫЕ БЛИКИ =====
+   position: absolute (не fixed!) — теперь блики часть страницы
+   и уезжают вместе с ней при скролле вниз, а не "прилипают" к экрану */
+.bokeh {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
 .bokeh-gold {
   border-radius: 50%;
-  filter: blur(60px);
+  filter: blur(50px);
   background: radial-gradient(circle, #f4d35e 0%, #d4af37 60%, transparent 75%);
 }
 
-/* Белые блики — вытянутая, "дымная" форма (border-radius разный на каждом углу) */
+/* Дым — менее размытый, чем раньше (было 45px), чтобы форма читалась чётче */
 .bokeh-smoke {
   border-radius: 60% 40% 55% 45% / 45% 55% 40% 60%;
-  filter: blur(45px);
-  background: radial-gradient(ellipse, #ffffff 0%, #ffffff 40%, transparent 75%);
+  filter: blur(25px);
+  background: radial-gradient(ellipse, #ffffff 0%, #ffffff 35%, transparent 70%);
 }
 
-.bokeh-1 { width: 420px; height: 420px; top: -120px; left: -140px; animation: appearFloat1 22s ease-in-out infinite; }
-.bokeh-2 { width: 380px; height: 260px; top: 35%; right: -160px; animation: appearFloat2 26s ease-in-out infinite; animation-delay: 3s; }
-.bokeh-3 { width: 340px; height: 340px; bottom: -80px; left: 5%; animation: appearFloat1 24s ease-in-out infinite; animation-delay: 9s; }
-.bokeh-4 { width: 300px; height: 200px; bottom: 15%; right: 8%; animation: appearFloat2 20s ease-in-out infinite; animation-delay: 6s; }
-.bokeh-5 { width: 260px; height: 320px; top: 10%; right: -80px; animation: appearFloat1 28s ease-in-out infinite; animation-delay: 14s; }
-.bokeh-6 { width: 320px; height: 200px; bottom: 40%; left: -100px; animation: appearFloat2 25s ease-in-out infinite; animation-delay: 2s; }
+.bokeh-1 { width: 450px; height: 450px; top: 0px; left: -140px; animation: appearFloat1 20s ease-in-out infinite; }
+.bokeh-2 { width: 400px; height: 280px; top: 1400px; right: -160px; animation: appearFloat2 24s ease-in-out infinite; animation-delay: 3s; }
+.bokeh-3 { width: 360px; height: 360px; top: 2800px; left: 5%; animation: appearFloat1 22s ease-in-out infinite; animation-delay: 9s; }
+.bokeh-4 { width: 320px; height: 220px; top: 4200px; right: 8%; animation: appearFloat2 18s ease-in-out infinite; animation-delay: 6s; }
+.bokeh-5 { width: 280px; height: 340px; top: 5600px; right: -80px; animation: appearFloat1 26s ease-in-out infinite; animation-delay: 14s; }
+.bokeh-6 { width: 340px; height: 220px; top: 7000px; left: -100px; animation: appearFloat2 23s ease-in-out infinite; animation-delay: 2s; }
 
-/* Блики "собираются" — плавно проявляются, плывут вбок, потом снова тают */
+/* Больше амплитуда движения (было ~50-90px, теперь заметно больше) */
 @keyframes appearFloat1 {
   0%   { opacity: 0; transform: translate(0, 0) scale(0.8); }
-  15%  { opacity: 0.4; }
-  50%  { opacity: 0.5; transform: translate(50px, -60px) scale(1.1); }
+  15%  { opacity: 0.45; }
+  50%  { opacity: 0.55; transform: translate(140px, -100px) scale(1.15); }
   85%  { opacity: 0.3; }
-  100% { opacity: 0; transform: translate(90px, -20px) scale(0.9); }
+  100% { opacity: 0; transform: translate(220px, -40px) scale(0.9); }
 }
 
 @keyframes appearFloat2 {
   0%   { opacity: 0; transform: translate(0, 0) scale(0.9); }
-  20%  { opacity: 0.35; }
-  50%  { opacity: 0.45; transform: translate(-60px, 40px) scale(1.15); }
+  20%  { opacity: 0.4; }
+  50%  { opacity: 0.5; transform: translate(-160px, 90px) scale(1.2); }
   80%  { opacity: 0.25; }
-  100% { opacity: 0; transform: translate(-40px, 70px) scale(0.85); }
+  100% { opacity: 0; transform: translate(-100px, 150px) scale(0.85); }
+}
+
+/* ===== ПЛАВАЮЩИЕ ЗОЛОТЫЕ ЧАСТИЦЫ ===== */
+.particles {
+  position: fixed;    /* эти именно fixed — как "пыль в воздухе" перед глазами */
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  bottom: -10px;
+  background-color: #d4af37;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: riseUp linear infinite;
+}
+
+@keyframes riseUp {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-100vh); opacity: 0; }
 }
 
 /* ===== КАРТОЧКИ-ОСТРОВА ===== */
 .card {
-  background-color: #141414;   /* чуть светлее чёрного фона */
+  background-color: #141414;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   padding: 40px 30px;
@@ -80,18 +123,18 @@ section h2 {
   padding-bottom: 5px;
 }
 
-/* ===== ЗАКРЕПЛЁННАЯ НАВИГАЦИЯ ===== */
+/* ===== НАВИГАЦИЯ ===== */
 .navbar {
-  position: sticky;      /* держит панель наверху при скролле */
+  position: sticky;
   top: 0;
-  z-index: 100;           /* поверх вообще всего на странице */
+  z-index: 100;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   background-color: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px); /* лёгкое размытие того, что под панелью, при скролле */
+  backdrop-filter: blur(8px);
   padding: 14px 20px;
   border-bottom: 2px solid #d4af37;
 }
@@ -101,11 +144,11 @@ section h2 {
   flex-wrap: wrap;
   gap: 28px;
   align-items: center;
-  margin: 0 auto;   /* центрируем блок ссылок в навигации */
+  margin: 0 auto;
 }
 
 .nav-links a {
-  position: relative;      /* нужно для подчёркивания через ::after ниже */
+  position: relative;
   color: #ffffff;
   text-decoration: none;
   font-size: 17px;
@@ -116,7 +159,6 @@ section h2 {
   transition: color 0.25s;
 }
 
-/* Золотая полоска, которая "выезжает" под ссылкой при наведении */
 .nav-links a:not(.nav-instagram)::after {
   content: '';
   position: absolute;
@@ -157,7 +199,7 @@ section h2 {
   background-color: transparent;
   color: #ffffff;
   border: 1.5px solid rgba(255,255,255,0.5);
-  border-radius: 999px;         /* полностью скруглённая "таблетка" */
+  border-radius: 999px;
   width: 38px;
   height: 38px;
   font-size: 12px;
@@ -170,20 +212,20 @@ section h2 {
 .lang-btn:hover {
   border-color: #d4af37;
   color: #d4af37;
-  transform: translateY(-2px);   /* лёгкий "подскок" при наведении */
+  transform: translateY(-2px);
 }
 
 .lang-btn.active {
   background-color: #d4af37;
   color: #0d0d0d;
   border-color: #d4af37;
-  box-shadow: 0 0 12px rgba(212, 175, 55, 0.6); /* золотое свечение у активного языка */
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
 }
 
-/* ===== ШАПКА: видео на фоне, размытое, ниже, рукописный заголовок ===== */
+/* ===== ШАПКА С ПАРАЛЛАКС-ВИДЕО ===== */
 .header {
   position: relative;
-  min-height: 55vh;      /* пониже, чем раньше */
+  min-height: 55vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,12 +235,14 @@ section h2 {
 
 .header-video {
   position: absolute;
-  top: 0; left: 0;
+  top: -10%;              /* небольшой запас сверху — параллакс сдвигает видео вверх/вниз через JS */
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 120%;            /* чуть больше контейнера, чтобы при параллаксе не было пустых краёв */
   object-fit: cover;
   filter: blur(4px);
   z-index: 0;
+  will-change: transform;  /* подсказка браузеру, что transform часто меняется — плавнее анимация */
 }
 
 .header-overlay {
@@ -216,42 +260,42 @@ section h2 {
   padding: 20px;
 }
 
-/* Рукописный шрифт, подключённый в <head> из Google Fonts */
+.brand-title-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .brand-title {
   font-family: 'Great Vibes', cursive;
   font-size: 90px;
   margin-bottom: 10px;
-  /* Анимация теперь на КАЖДОЙ букве отдельно — см. .letter ниже */
+  /* clip-path "закрывает" текст справа, анимация открывает его слева направо —
+     создаёт эффект, будто текст постепенно дописывается */
+  clip-path: inset(0 100% 0 0);
 }
 
-.brand-title .letter {
-  display: inline-block;
+@keyframes writeReveal {
+  to { clip-path: inset(0 0 0 0); }
+}
+
+/* "Перо", которое едет синхронно с открытием текста */
+.pen-tip {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  font-size: 28px;
   opacity: 0;
-  transform: translateY(15px);
-  animation: writeLetter 0.5s ease forwards; /* forwards — буква остаётся видимой после анимации */
+  transform: translateX(0);
 }
 
-@keyframes writeLetter {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes penMove {
+  0% { opacity: 1; transform: translateX(0); }
+  95% { opacity: 1; transform: translateX(280px); }
+  100% { opacity: 0; transform: translateX(300px); }
 }
 
 .header-content p {
   font-size: 20px;
-  animation: fadeInUp 1.8s ease-out; /* появляется чуть позже заголовка */
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ===== О НАС ===== */
@@ -266,10 +310,49 @@ section h2 {
 .about-video {
   display: block;
   width: 100%;
-  max-width: 360px;      /* было 500px — заметно меньше, как просили */
+  max-width: 360px;
   margin: 20px auto 0;
   border-radius: 14px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+}
+
+/* ===== СЧЁТЧИК БУРГЕРОВ ===== */
+.burger-counter {
+  text-align: center;
+}
+
+.counter-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.burger-icon {
+  font-size: 50px;
+}
+
+.counter-number {
+  font-size: 56px;
+  font-weight: bold;
+  color: #d4af37;
+  font-variant-numeric: tabular-nums; /* цифры одинаковой ширины — не "прыгает" при смене */
+}
+
+.counter-fail {
+  font-size: 40px;
+  margin-top: 16px;
+  opacity: 0;
+  color: #e63946;
+}
+
+.counter-fail.show {
+  animation: blinkFail 0.6s steps(1) infinite;
+}
+
+@keyframes blinkFail {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* ===== ГАЛЕРЕЯ (видео-карусель) ===== */
@@ -326,20 +409,45 @@ section h2 {
   background-color: #d4af37;
 }
 
-/* ===== АВТО-КАРУСЕЛИ ФОТО (скидки + ярусы меню) ===== */
+/* ===== РАМКА С КАРУСЕЛЬЮ + СТРЕЛКАМИ (переиспользуется везде) ===== */
+.carousel-frame {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.carousel-arrow {
+  background-color: #d4af37;
+  color: #0d0d0d;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.carousel-arrow:hover {
+  transform: scale(1.1);
+}
+
 .auto-carousel {
   display: flex;
   gap: 16px;
-  overflow-x: auto;       /* позволяет и крутить руками, и через JS */
+  overflow-x: auto;
   scroll-behavior: smooth;
-  margin-top: 20px;
   padding-bottom: 10px;
-  /* Прячем полосу прокрутки, чтобы выглядело чище */
-  scrollbar-width: none;      /* Firefox */
+  scrollbar-width: none;
+  cursor: grab;
+  flex: 1;    /* занимает всё доступное место между стрелками */
 }
 
 .auto-carousel::-webkit-scrollbar {
-  display: none;               /* Chrome, Safari */
+  display: none;
 }
 
 .carousel-img {
@@ -348,57 +456,53 @@ section h2 {
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
   flex-shrink: 0;
-  cursor: pointer;          /* показываем, что фото кликабельно */
+  cursor: pointer;
   transition: transform 0.2s;
 }
 
 .carousel-img:hover {
-  transform: scale(1.03);   /* лёгкое увеличение при наведении — намёк, что можно кликнуть */
+  transform: scale(1.03);
 }
 
-.auto-carousel {
-  cursor: grab;   /* показываем "можно тащить" на самой карусели */
+/* ===== РЕКОМЕНДУЕМ (хайлайт-сетка) ===== */
+.special-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 20px;
 }
 
-/* ===== ЛАЙТБОКС: крупный просмотр фото поверх всего сайта ===== */
-.lightbox {
-  display: none;             /* скрыт по умолчанию */
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(6px);  /* размытый тёмный фон вокруг фото */
-  z-index: 999;                /* поверх абсолютно всего, включая навигацию */
-  align-items: center;
-  justify-content: center;
-  cursor: zoom-out;
-}
-
-.lightbox.active {
-  display: flex;    /* JS добавляет класс "active" при клике на фото */
-}
-
-.lightbox-img {
-  max-width: 90vw;
-  max-height: 85vh;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-}
-
-.lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 40px;
-  color: #d4af37;
+.special-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
-/* ===== СКИДКИ ===== */
-.discounts h2 {
-  font-size: 30px;
+.special-img:hover {
+  transform: scale(1.03);
 }
 
-/* ===== МЕНЮ: заголовок раздела + карточки-ярусы ===== */
+/* Главное фото — занимает 2 колонки и выше остальных, больше внимания */
+.special-featured {
+  grid-column: span 2;
+  grid-row: span 2;
+  height: 100%;
+  border: 3px solid #d4af37;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+}
+
+/* ===== МЕНЮ ===== */
+.menu-main-title {
+  font-size: 52px;
+  color: #d4af37;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
 .menu-wrapper {
   max-width: 700px;
   margin: 0 auto;
@@ -406,15 +510,7 @@ section h2 {
   text-align: center;
 }
 
-.menu-main-title {
-  font-size: 52px;              /* было 40px — заметно крупнее */
-  color: #d4af37;
-  margin-bottom: 8px;
-  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4); /* лёгкое золотое свечение */
-}
-
 .menu-wrapper::before {
-  /* Декоративная золотая полоска под главным заголовком меню */
   content: '';
   display: block;
   width: 80px;
@@ -426,17 +522,17 @@ section h2 {
 
 .menu-tier {
   text-align: left;
-  border-top: 3px solid #d4af37;  /* золотой акцент сверху каждого яруса */
+  border-top: 3px solid #d4af37;
   padding-top: 30px;
 }
 
 .menu-tier h3 {
-  font-size: 28px;                 /* было 24px — крупнее */
+  font-size: 28px;
   color: #d4af37;
   margin-bottom: 4px;
 }
 
-/* ===== КАК НАС НАЙТИ (КАРТА) ===== */
+/* ===== КАРТА ===== */
 .map-wrapper {
   position: relative;
   display: block;
@@ -499,6 +595,32 @@ section h2 {
   color: white;
 }
 
+/* ===== ПЛАВАЮЩАЯ КНОПКА "ЗАКАЗАТЬ" ===== */
+.floating-order-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 150;
+  padding: 16px 28px;
+  border-radius: 999px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  /* Градиент шире самой кнопки + анимация двигает его — эффект "переливания" */
+  background: linear-gradient(90deg, #d4af37, #e63946, #d4af37, #e63946);
+  background-size: 300% 100%;
+  animation: shimmerButton 4s linear infinite;
+}
+
+@keyframes shimmerButton {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
 /* ===== ПОДВАЛ ===== */
 .footer {
   text-align: center;
@@ -508,6 +630,39 @@ section h2 {
   font-size: 14px;
   position: relative;
   z-index: 1;
+}
+
+/* ===== ЛАЙТБОКС ===== */
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(6px);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  color: #d4af37;
+  cursor: pointer;
 }
 
 /* ===== АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ ===== */
@@ -535,5 +690,18 @@ section h2 {
   }
   .carousel-img {
     height: 180px;
+  }
+  .special-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .special-featured {
+    grid-column: span 2;
+    height: 220px;
+  }
+  .floating-order-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+    bottom: 16px;
+    right: 16px;
   }
 }
