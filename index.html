@@ -6,7 +6,7 @@
   <title>King Zone Burger München</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 
 <body>
@@ -104,32 +104,22 @@
     </div>
   </section>
 
-  <!-- ===== СКИДКИ ===== -->
+  <!-- ===== СКИДКИ: слайд-шоу (одно фото + стрелки), с плавной сменой ===== -->
   <section id="discounts" class="discounts card">
     <h2 data-i18n="discounts-heading">Rabatte</h2>
-    <div class="carousel-frame">
+    <div class="slideshow" data-images='["images/photo_2026-08-27_22-09-55.jpg","images/photo_2026-08-27_22-09-57.jpg"]'>
       <button class="carousel-arrow prev">‹</button>
-      <div class="auto-carousel">
-        <img src="images/photo_2026-08-27_22-09-55.jpg" alt="Rabatt" class="carousel-img">
-        <img src="images/photo_2026-08-27_22-09-57.jpg" alt="Rabatt" class="carousel-img">
-      </div>
+      <img src="images/photo_2026-08-27_22-09-55.jpg" alt="Rabatt" class="slideshow-img">
       <button class="carousel-arrow next">›</button>
     </div>
   </section>
 
-  <!-- ===== BESTSELLER ===== -->
+  <!-- ===== BESTSELLER: слайд-шоу ===== -->
   <section id="special" class="special card">
     <h2 data-i18n="special-heading" class="pulse-heading">Bestseller 🔥</h2>
-    <div class="carousel-frame">
+    <div class="slideshow" data-images='["images/photo_2026-08-27_22-09-43.jpg","images/photo_2026-08-27_22-09-27.jpg","images/photo_2026-08-27_22-09-34.jpg","images/photo_2026-08-27_22-09-41.jpg","images/photo_2026-08-27_22-09-51.jpg","images/photo_2026-08-27_22-09-53.jpg"]'>
       <button class="carousel-arrow prev">‹</button>
-      <div class="auto-carousel">
-        <img src="images/photo_2026-08-27_22-09-43.jpg" alt="Bestseller" class="carousel-img bestseller-img">
-        <img src="images/photo_2026-08-27_22-09-27.jpg" alt="Bestseller" class="carousel-img bestseller-img">
-        <img src="images/photo_2026-08-27_22-09-34.jpg" alt="Bestseller" class="carousel-img bestseller-img">
-        <img src="images/photo_2026-08-27_22-09-41.jpg" alt="Bestseller" class="carousel-img bestseller-img">
-        <img src="images/photo_2026-08-27_22-09-51.jpg" alt="Bestseller" class="carousel-img bestseller-img">
-        <img src="images/photo_2026-08-27_22-09-53.jpg" alt="Bestseller" class="carousel-img bestseller-img">
-      </div>
+      <img src="images/photo_2026-08-27_22-09-43.jpg" alt="Bestseller" class="slideshow-img bestseller-img">
       <button class="carousel-arrow next">›</button>
     </div>
   </section>
@@ -295,47 +285,41 @@
       });
     }
 
-    /* ===== АВТО-КАРУСЕЛИ ФОТО: теперь ПО-НАСТОЯЩЕМУ бесконечные =====
-       Дублируем контент 3 РАЗА (не 2) и стартуем сразу со средней копии —
-       тогда есть запас для прокрutки что влево, что вправо. При приближении
-       к краю любого рода (авто, мышкой, колёсиком, кнопкой) — незаметно
-       "перепрыгиваем" на эквивалентную позицию в соседней копии. */
+    /* ===== КАРУСЕЛИ МЕНЮ (Burgers / Sandwiches / Snacks) =====
+       Переписано на requestAnimationFrame вместо setInterval(20ms) —
+       это встроенный в браузер способ анимировать плавно и без "рывков",
+       синхронизированный с частотой обновления экрана. Также setWidth
+       (ширина одного набора фото) считается ОДИН РАЗ, а не на каждый тик —
+       именно частый пересчёт размеров и был причиной "лагов". */
     document.querySelectorAll('.auto-carousel').forEach(carousel => {
       try {
         const originalHTML = carousel.innerHTML;
-        carousel.innerHTML = originalHTML + originalHTML + originalHTML;
+        carousel.innerHTML = originalHTML + originalHTML; // 2 копии достаточно
+        carousel.scrollLeft = 0;
 
-        requestAnimationFrame(() => {
-          const setWidth = carousel.scrollWidth / 3;
-          carousel.scrollLeft = setWidth; // стартуем со 2-й (средней) копии
+        // Считаем ширину ОДИН раз после того, как фото гарантированно в DOM
+        let setWidth = carousel.scrollWidth / 2;
+        window.addEventListener('resize', () => {
+          setWidth = carousel.scrollWidth / 2; // пересчитываем только при изменении размера окна
         });
 
-        let paused = false;
         let isDragging = false;
         let dragStartX = 0;
         let dragStartScroll = 0;
         let dragMoved = 0;
+        let pausedUntil = 0; // если сейчас < pausedUntil — авто-прокрутка на паузе
 
-        setInterval(() => {
-          if (paused || isDragging) return;
-          const setWidth = carousel.scrollWidth / 3;
-          if (setWidth <= carousel.clientWidth) return;
-          carousel.scrollLeft += 1;
-        }, 20);
-
-        // Незаметная "перемотка" при приближении к любому краю
-        carousel.addEventListener('scroll', () => {
-          const setWidth = carousel.scrollWidth / 3;
-          if (setWidth <= 0) return;
-          if (carousel.scrollLeft < setWidth * 0.5) {
-            carousel.scrollLeft += setWidth;
-          } else if (carousel.scrollLeft > setWidth * 1.5) {
-            carousel.scrollLeft -= setWidth;
+        function tick() {
+          if (!isDragging && Date.now() > pausedUntil && setWidth > carousel.clientWidth) {
+            carousel.scrollLeft += 0.6;
+            if (carousel.scrollLeft >= setWidth) {
+              carousel.scrollLeft -= setWidth;
+            }
           }
-        });
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
 
-        carousel.addEventListener('mouseenter', () => paused = true);
-        carousel.addEventListener('mouseleave', () => { paused = false; isDragging = false; });
         carousel.addEventListener('mousedown', e => {
           isDragging = true;
           dragMoved = 0;
@@ -354,12 +338,12 @@
           carousel.scrollLeft = dragStartScroll - delta;
         });
 
-        carousel.addEventListener('touchstart', () => { paused = true; }, { passive: true });
-        carousel.addEventListener('touchend', () => { paused = false; }, { passive: true });
+        carousel.addEventListener('touchstart', () => { pausedUntil = Date.now() + 3000; }, { passive: true });
 
         carousel.addEventListener('wheel', e => {
           e.preventDefault();
           carousel.scrollLeft += e.deltaY;
+          pausedUntil = Date.now() + 1500;
         }, { passive: false });
 
         carousel.querySelectorAll('.carousel-img').forEach(img => {
@@ -367,20 +351,55 @@
             if (dragMoved < 5) openLightbox(img.src);
           });
         });
+
+        // Кнопки-стрелки у ЭТОЙ конкретной карусели: жмём — крутится + пауза на 5 сек
+        const frame = carousel.closest('.carousel-frame');
+        if (frame) {
+          frame.querySelectorAll('.carousel-arrow').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const direction = btn.classList.contains('next') ? 1 : -1;
+              carousel.scrollBy({ left: direction * 320, behavior: 'smooth' });
+              pausedUntil = Date.now() + 5000; // пауза 5 секунд, чтобы можно было спокойно дожать кнопку ещё раз
+            });
+          });
+        }
       } catch (err) {
-        console.error('Ошибка в карусели:', err);
+        console.error('Ошибка в карусели меню:', err);
       }
     });
 
-    /* ===== КНОПКИ-СТРЕЛКИ У КАРУСЕЛЕЙ =====
-       Подключаем через addEventListener (а не onclick в HTML) — надёжнее */
-    document.querySelectorAll('.carousel-arrow').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const frame = btn.closest('.carousel-frame');
-        const track = frame.querySelector('.auto-carousel');
-        const direction = btn.classList.contains('next') ? 1 : -1;
-        track.scrollBy({ left: direction * 320, behavior: 'smooth' });
+    /* ===== СЛАЙД-ШОУ (Скидки + Bestseller): одно фото за раз =====
+       Крутится по кругу автоматически, стрелками — вручную (с паузой
+       автопрокрутки на 5 сек после нажатия), с красивой анимацией смены фото */
+    document.querySelectorAll('.slideshow').forEach(slideshow => {
+      const images = JSON.parse(slideshow.dataset.images);
+      const imgEl = slideshow.querySelector('.slideshow-img');
+      let index = 0;
+      let pausedUntil = 0;
+
+      function showImage(newIndex) {
+        index = (newIndex + images.length) % images.length; // зацикливаем в обе стороны
+        imgEl.classList.remove('fade-slide');
+        void imgEl.offsetWidth; // сброс анимации, чтобы она сыграла заново
+        imgEl.src = images[index];
+        imgEl.classList.add('fade-slide');
+      }
+
+      slideshow.querySelector('.prev').addEventListener('click', () => {
+        showImage(index - 1);
+        pausedUntil = Date.now() + 5000;
       });
+      slideshow.querySelector('.next').addEventListener('click', () => {
+        showImage(index + 1);
+        pausedUntil = Date.now() + 5000;
+      });
+
+      setInterval(() => {
+        if (Date.now() < pausedUntil) return;
+        showImage(index + 1);
+      }, 3500);
+
+      imgEl.addEventListener('click', () => openLightbox(imgEl.src));
     });
 
     /* ===== ЛАЙТБОКС ===== */
@@ -438,20 +457,24 @@
         container.appendChild(star);
       }
 
-      // Белый дым — вертикальные почти-нечёткие полосы, по обеим сторонам,
-      // появляются/исчезают в разных местах и в разное время
+      // Белый дым — вертикальные силуэты, по обеим сторонам. Чтобы они
+      // НЕ накладывались друг на друга, делим высоту страницы на равные
+      // полосы и кладём максимум один силуэт дыма в каждую полосу
       const smokeCount = 14;
+      const bandHeight = pageHeight / smokeCount;
       for (let i = 0; i < smokeCount; i++) {
         const smoke = document.createElement('div');
         smoke.className = 'smoke-wisp';
-        smoke.style.top = (Math.random() * pageHeight) + 'px';
+        // Случайное положение ВНУТРИ своей полосы — не по всей странице
+        const bandStart = i * bandHeight;
+        smoke.style.top = (bandStart + Math.random() * bandHeight * 0.5) + 'px';
         if (i % 2 === 0) {
-          smoke.style.left = (Math.random() * 8) + '%';
+          smoke.style.left = (Math.random() * 6) + '%';
         } else {
-          smoke.style.right = (Math.random() * 8) + '%';
+          smoke.style.right = (Math.random() * 6) + '%';
         }
-        smoke.style.animationDuration = (7 + Math.random() * 6) + 's';
-        smoke.style.animationDelay = (Math.random() * 12) + 's';
+        smoke.style.animationDuration = (9 + Math.random() * 6) + 's';
+        smoke.style.animationDelay = (Math.random() * 10) + 's';
         container.appendChild(smoke);
       }
     }
@@ -459,13 +482,13 @@
     /* ===== ЛЕТАЮЩИЕ ЗОЛОТЫЕ ЧАСТИЦЫ (не зависят от скролла) ===== */
     function createParticles() {
       const container = document.getElementById('particles');
-      const count = 35;
+      const count = 55; // было 35 — заметно больше
       for (let i = 0; i < count; i++) {
         const p = document.createElement('div');
         p.classList.add('particle');
         p.style.left = Math.random() * 100 + 'vw';
-        p.style.animationDuration = (8 + Math.random() * 10) + 's';
-        p.style.animationDelay = (Math.random() * 10) + 's';
+        p.style.animationDuration = (4 + Math.random() * 5) + 's'; // было 8-18с — теперь заметно быстрее, чаще мелькают
+        p.style.animationDelay = (Math.random() * 6) + 's';
         p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
         container.appendChild(p);
       }
@@ -573,6 +596,7 @@
         btn.classList.toggle('active', btn.dataset.lang === lang);
       });
       document.documentElement.lang = lang;
+      animateBrandTitle(); // перерисовываем заголовок заново при каждой смене языка
     }
 
     /* ===== ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ===== */
