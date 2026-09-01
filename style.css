@@ -65,16 +65,38 @@ body {
   50% { opacity: 1; }
 }
 
-/* Белый дым — вытянутые вертикальные силуэты, минимум размытия,
-   с лёгким покачиванием в стороны для более "живого", похожего на
-   настоящий дым движения (не просто вверх-вниз) */
+/* Золотые частицы — крупнее звёзд, появляются/исчезают заметно чаще,
+   теперь ЧАСТЬ СТРАНИЦЫ (внутри .bg-effects), а не приклеены к экрану —
+   значит двигаются вниз вместе с тобой, когда листаешь сайт */
+.gold-particle {
+  position: absolute;
+  background: #d4af37;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 3px rgba(212, 175, 55, 0.7);
+  opacity: 0;
+  animation-name: particlePulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes particlePulse {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  50% { opacity: 0.85; transform: scale(1.1); }
+}
+
+/* Белый дым — БЕЗ filter:blur(). Вместо размытия — несколько слоёв
+   radial-gradient друг на друге: каждый слой сам по себе мягкий по краям
+   (это свойство градиента, не блюра), а вместе они складываются в
+   объёмный "клубящийся" силуэт, похожий на настоящий дым */
 .smoke-wisp {
   position: absolute;
-  width: 45px;
-  height: 300px;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.03));
-  border-radius: 50% 50% 60% 60% / 65% 65% 35% 35%;
-  filter: blur(7px);
+  width: 70px;
+  height: 320px;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255,255,255,0.55) 0%, transparent 55%),
+    radial-gradient(circle at 38% 38%, rgba(255,255,255,0.45) 0%, transparent 50%),
+    radial-gradient(circle at 62% 62%, rgba(255,255,255,0.4) 0%, transparent 50%),
+    radial-gradient(circle at 45% 88%, rgba(255,255,255,0.32) 0%, transparent 48%);
   opacity: 0;
   animation-name: smokeReal;
   animation-timing-function: ease-in-out;
@@ -83,38 +105,10 @@ body {
 
 @keyframes smokeReal {
   0%   { opacity: 0; transform: translate(0, 15px) scaleY(0.9) rotate(0deg); }
-  25%  { opacity: 0.4; transform: translate(8px, 0px) scaleY(1) rotate(2deg); }
-  50%  { opacity: 0.35; transform: translate(-6px, -20px) scaleY(1.08) rotate(-2deg); }
-  75%  { opacity: 0.2; transform: translate(10px, -35px) scaleY(1.1) rotate(1deg); }
+  25%  { opacity: 0.5; transform: translate(8px, 0px) scaleY(1) rotate(2deg); }
+  50%  { opacity: 0.45; transform: translate(-6px, -20px) scaleY(1.08) rotate(-2deg); }
+  75%  { opacity: 0.25; transform: translate(10px, -35px) scaleY(1.1) rotate(1deg); }
   100% { opacity: 0; transform: translate(-4px, -50px) scaleY(0.95) rotate(0deg); }
-}
-
-/* ===== ЛЕТАЮЩИЕ ЗОЛОТЫЕ ЧАСТИЦЫ (фиксированы к экрану, не к странице) ===== */
-.particles {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: -1;
-  overflow: hidden;
-}
-
-.particle {
-  position: absolute;
-  bottom: -10px;
-  background-color: #d4af37;
-  border-radius: 50%;
-  opacity: 0.6;
-  animation: riseUpSway linear infinite;
-}
-
-/* Добавили лёгкое покачивание в стороны через translateX,
-   не только движение вверх — выглядит более "живым" */
-@keyframes riseUpSway {
-  0%   { transform: translate(0, 0); opacity: 0; }
-  10%  { opacity: 0.6; }
-  50%  { transform: translate(20px, -50vh); }
-  90%  { opacity: 0.6; }
-  100% { transform: translate(-15px, -100vh); opacity: 0; }
 }
 
 /* ===== КАРТОЧКИ-ОСТРОВА ===== */
@@ -362,6 +356,15 @@ section h2 {
   font-variant-numeric: tabular-nums;
   min-width: 160px;   /* чтобы ширина не "прыгала" когда меняется на XXXX */
   text-align: left;
+}
+
+.counter-number.counter-xxxx {
+  animation: blinkYellowRed 0.5s steps(1) infinite;
+}
+
+@keyframes blinkYellowRed {
+  0%, 100% { color: #d4af37; }
+  50% { color: #e63946; }
 }
 
 /* ===== ГАЛЕРЕЯ (видео-карусель) ===== */
@@ -624,27 +627,18 @@ section h2 {
   bottom: 24px;
   right: 24px;
   z-index: 150;
-  padding: 18px 32px;          /* было 16px 28px — чуть крупнее */
+  padding: 18px 32px;
   border-radius: 999px;
-  color: white;
+  color: #000000;               /* чёрный текст, как у кнопки Menü */
   font-weight: bold;
   font-size: 17px;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: linear-gradient(90deg, #d4af37, #e63946, #d4af37, #e63946);
-  background-size: 300% 100%;
-  animation: shimmerButton 3s linear infinite, pulseShadow 2s ease-in-out infinite;
-}
-
-@keyframes shimmerButton {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
-}
-
-@keyframes pulseShadow {
-  0%, 100% { box-shadow: 0 8px 24px rgba(230, 57, 70, 0.4); }
-  50% { box-shadow: 0 8px 36px rgba(212, 175, 55, 0.8); }
+  background: linear-gradient(90deg, #d4af37, #f6e27a, #d4af37); /* тот же золотой градиент, что у Menü */
+  background-size: 250% 100%;
+  animation: shimmerGoldBtn 3.5s linear infinite; /* переиспользуем анимацию кнопки Menü */
+  border: 2px solid #000000;
 }
 
 /* ===== ПОДВАЛ ===== */
@@ -693,34 +687,107 @@ section h2 {
 
 /* ===== АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ ===== */
 @media (max-width: 600px) {
+  /* --- ШАПКА: заметно ниже и компактнее --- */
+  .header {
+    min-height: 32vh;   /* было 55vh — сильно ниже на телефоне */
+  }
   .brand-title-svg {
-    max-width: 340px;
+    max-width: 260px;
   }
-  section h2, .card h2 {
-    font-size: 22px;
+  .header-content p {
+    font-size: 14px;
   }
-  .menu-main-title {
-    font-size: 30px;
+
+  /* --- НАВИГАЦИЯ: горизонтальная прокручиваемая полоса вместо переноса строк --- */
+  .navbar {
+    flex-wrap: nowrap;      /* запрещаем перенос на новую строку */
+    overflow-x: auto;       /* вместо этого — горизontальная прокрутка (свайп) */
+    justify-content: flex-start;
+    padding: 10px 14px;
+    gap: 10px;
+    scrollbar-width: none;  /* прячем полосу прокрутки — выглядит чище */
+  }
+  .navbar::-webkit-scrollbar {
+    display: none;
   }
   .nav-links {
-    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 16px;
+    margin: 0;               /* убираем auto-центрирование — на телефоне список длиннее экрана */
+    flex-shrink: 0;
+  }
+  .nav-links a {
     font-size: 13px;
+    white-space: nowrap;    /* текст пункта меню не переносится на 2 строки */
   }
   .nav-menu-btn {
-    font-size: 15px;
-    padding: 6px 16px;
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+  .lang-switch {
+    flex-shrink: 0;
+  }
+  .lang-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 11px;
+  }
+
+  /* --- ОБЩИЙ РАЗМЕР ТЕКСТА И КАРТОЧЕК --- */
+  section h2, .card h2 {
+    font-size: 20px;
+  }
+  .card {
+    padding: 24px 18px;      /* было 40px 30px — компактнее на маленьком экране */
+    margin: 20px auto;
+  }
+  .about h2 {
+    font-size: 24px;
+  }
+  .about p {
+    font-size: 16px;
+  }
+  .about-video {
+    max-width: 260px;
+  }
+
+  /* --- СЧЁТЧИК БУРГЕРОВ --- */
+  .counter-number {
+    font-size: 38px;
+    min-width: 110px;
+  }
+  .burger-icon {
+    font-size: 34px;
+  }
+
+  /* --- МЕНЮ --- */
+  .menu-main-title {
+    font-size: 28px;
+  }
+  .menu-tier h3 {
+    font-size: 20px;
   }
   .video-carousel {
     gap: 6px;
   }
-  .carousel-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
+  .carousel-btn, .carousel-arrow {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
   }
   .carousel-img {
-    height: 180px;
+    height: 150px;    /* было 180px — компактнее */
   }
+  .slideshow-img {
+    max-height: 240px;
+  }
+
+  /* --- КАРТА --- */
+  .map-frame {
+    height: 300px;    /* было 500px — не занимает весь экран */
+  }
+
+  /* --- ПЛАВАЮЩАЯ КНОПКА --- */
   .floating-order-btn {
     padding: 12px 20px;
     font-size: 14px;

@@ -6,20 +6,36 @@
   <title>King Zone Burger München</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 
 <body>
 
+  <!-- ===== ФИКС: страница всегда открывается СВЕРХУ, даже если в адресе
+       остался "якорь" (#menu и т.п.) от прошлого клика по навигации =====
+       Это должно стоять В САМОМ НАЧАЛЕ body, чтобы сработать до того,
+       как браузер попытается сам проскроллить к элементу по якорю */
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+    window.addEventListener('load', () => {
+      window.scrollTo(0, 0);
+      if (window.location.hash) {
+        // Убираем #menu и т.п. из адресной строки, чтобы при СЛЕДУЮЩЕМ
+        // обновлении браузер тоже не пытался сам туда прыгнуть
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    });
+  </script>
+
   <!-- ===== ЗОЛОТАЯ МЕРЦАЮЩАЯ РАМКА ВСЕГО САЙТА ===== -->
   <div class="gold-border-frame"></div>
 
-  <!-- ===== ФОН: золотые звёзды + белый дым — генерируются JS ниже,
-       чтобы покрыть ВСЮ высоту страницы (она длинная и меняется) ===== -->
+  <!-- ===== ФОН: золотые звёзды, частицы и белый дым — генерируются JS,
+       ВСЕ они теперь часть страницы (двигаются вместе со скроллом) ===== -->
   <div class="bg-effects" id="bgEffects"></div>
-
-  <!-- ===== ЛЕТАЮЩИЕ ЗОЛОТЫЕ ЧАСТИЦЫ (фиксированы к экрану, не к странице) ===== -->
-  <div class="particles" id="particles"></div>
 
   <!-- ===== ЗАКРЕПЛЁННАЯ НАВИГАЦИЯ ===== -->
   <nav class="navbar">
@@ -80,10 +96,11 @@
 
   <!-- ===== СЧЁТЧИК БУРГЕРОВ ===== -->
   <section class="burger-counter card">
-    <p class="counter-label" data-i18n="counter-label">Bereits gegessen</p>
+    <p class="counter-label" data-i18n="counter-label">Bereits gegessene Burger</p>
     <div class="counter-display">
       <span class="burger-icon">🍔</span>
       <span class="counter-number" id="burgerCounter">0000</span>
+      <span class="burger-icon">🍔</span>
     </div>
   </section>
 
@@ -357,9 +374,15 @@
         if (frame) {
           frame.querySelectorAll('.carousel-arrow').forEach(btn => {
             btn.addEventListener('click', () => {
+              // Считаем реальную ширину ОДНОГО фото + отступ между фото —
+              // так прокрутка "останавливается" ровно на следующей карточке,
+              // а не захватывает то 2, то 3 фото за раз
+              const firstImg = carousel.querySelector('.carousel-img');
+              const gapPx = 16; // должно совпадать с "gap: 16px" у .auto-carousel в CSS
+              const step = firstImg ? firstImg.getBoundingClientRect().width + gapPx : 320;
               const direction = btn.classList.contains('next') ? 1 : -1;
-              carousel.scrollBy({ left: direction * 320, behavior: 'smooth' });
-              pausedUntil = Date.now() + 5000; // пауза 5 секунд, чтобы можно было спокойно дожать кнопку ещё раз
+              carousel.scrollBy({ left: direction * step, behavior: 'smooth' });
+              pausedUntil = Date.now() + 5000;
             });
           });
         }
@@ -429,7 +452,11 @@
           counterEl.textContent = String(count).padStart(4, '0');
           setTimeout(() => {
             counterEl.textContent = 'XXXX';
-            setTimeout(runBurgerCounter, 4500);
+            counterEl.classList.add('counter-xxxx'); // включаем мигание жёлтый/красный
+            setTimeout(() => {
+              counterEl.classList.remove('counter-xxxx');
+              runBurgerCounter();
+            }, 4500);
           }, 700);
         } else {
           counterEl.textContent = String(count).padStart(4, '0');
@@ -437,15 +464,15 @@
       }, 55); // было 20мс — теперь заметно медленнее и спокойнее
     }
 
-    /* ===== ФОН: золотые звёзды + белый дым, на всю высоту страницы =====
-       Ждём window.load, чтобы фото/видео успели загрузиться и высота
-       страницы (document.body.scrollHeight) была уже окончательной */
+    /* ===== ФОН: золотые звёзды + частицы + белый дым, на всю высоту страницы =====
+       ВСЁ внутри одного контейнера с position:absolute — значит вообще
+       всё это теперь двигается вместе со страницей при скролле */
     function createBackgroundEffects() {
       const container = document.getElementById('bgEffects');
       const pageHeight = document.body.scrollHeight;
       container.style.height = pageHeight + 'px';
 
-      // Золотые звёзды — маленькие точки, мерцают в случайных местах по всей странице
+      // Золотые звёзды — маленькие мерцающие точки
       const starCount = 70;
       for (let i = 0; i < starCount; i++) {
         const star = document.createElement('div');
@@ -457,15 +484,26 @@
         container.appendChild(star);
       }
 
-      // Белый дым — вертикальные силуэты, по обеим сторонам. Чтобы они
-      // НЕ накладывались друг на друга, делим высоту страницы на равные
-      // полосы и кладём максимум один силуэт дыма в каждую полосу
-      const smokeCount = 14;
+      // Золотые частицы — крупнее звёзд, появляются/исчезают чаще,
+      // теперь тоже часть страницы (скроллятся вместе с ней)
+      const particleCount = 60;
+      for (let i = 0; i < particleCount; i++) {
+        const p = document.createElement('div');
+        p.className = 'gold-particle';
+        p.style.top = (Math.random() * pageHeight) + 'px';
+        p.style.left = (Math.random() * 100) + '%';
+        p.style.width = p.style.height = (3 + Math.random() * 3) + 'px';
+        p.style.animationDuration = (3 + Math.random() * 4) + 's';
+        p.style.animationDelay = (Math.random() * 6) + 's';
+        container.appendChild(p);
+      }
+
+      // Белый дым — делим страницу на полосы, чтобы силуэты НЕ накладывались
+      const smokeCount = 20; // было 14 — больше
       const bandHeight = pageHeight / smokeCount;
       for (let i = 0; i < smokeCount; i++) {
         const smoke = document.createElement('div');
         smoke.className = 'smoke-wisp';
-        // Случайное положение ВНУТРИ своей полосы — не по всей странице
         const bandStart = i * bandHeight;
         smoke.style.top = (bandStart + Math.random() * bandHeight * 0.5) + 'px';
         if (i % 2 === 0) {
@@ -476,21 +514,6 @@
         smoke.style.animationDuration = (9 + Math.random() * 6) + 's';
         smoke.style.animationDelay = (Math.random() * 10) + 's';
         container.appendChild(smoke);
-      }
-    }
-
-    /* ===== ЛЕТАЮЩИЕ ЗОЛОТЫЕ ЧАСТИЦЫ (не зависят от скролла) ===== */
-    function createParticles() {
-      const container = document.getElementById('particles');
-      const count = 55; // было 35 — заметно больше
-      for (let i = 0; i < count; i++) {
-        const p = document.createElement('div');
-        p.classList.add('particle');
-        p.style.left = Math.random() * 100 + 'vw';
-        p.style.animationDuration = (4 + Math.random() * 5) + 's'; // было 8-18с — теперь заметно быстрее, чаще мелькают
-        p.style.animationDelay = (Math.random() * 6) + 's';
-        p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
-        container.appendChild(p);
       }
     }
 
@@ -508,7 +531,7 @@
         "nav-menu": "Menü", "nav-find": "Wo wir sind", "nav-career": "Karriere",
         "about-heading": "Über uns",
         "about-text": "Bei King Zone verwandeln wir jeden Burger in ein kleines Erlebnis. Wir sind ein neues Konzept in München — mit eigens entwickelten Signature-Rezepten, die man sonst nirgends findet. Jeder Burger, jedes Sandwich und jede Sauce ist hausgemacht, nach unseren eigenen Ideen, ohne Kompromisse bei der Qualität. Frisch gepresstes Smash-Beef, geröstete Brioche-Buns und ein Team, das mit echter Leidenschaft kocht — das ist King Zone.",
-        "counter-label": "Bereits gegessen",
+        "counter-label": "Bereits gegessene Burger",
         "gallery-heading": "Galerie",
         "discounts-heading": "Rabatte",
         "special-heading": "Bestseller 🔥",
@@ -528,7 +551,7 @@
         "nav-menu": "Menu", "nav-find": "Where we are", "nav-career": "Careers",
         "about-heading": "About us",
         "about-text": "At King Zone, we turn every burger into a little experience. We're a new concept in Munich — with signature recipes you won't find anywhere else. Every burger, sandwich, and sauce is handmade, following our own ideas, without compromising on quality. Freshly pressed smash beef, toasted brioche buns, and a team that cooks with real passion — that's King Zone.",
-        "counter-label": "Already eaten",
+        "counter-label": "Burgers already eaten",
         "gallery-heading": "Gallery",
         "discounts-heading": "Discounts",
         "special-heading": "Bestsellers 🔥",
@@ -548,7 +571,7 @@
         "nav-menu": "Меню", "nav-find": "Где мы", "nav-career": "Работа",
         "about-heading": "О нас",
         "about-text": "В King Zone мы превращаем каждый бургер в маленькое приключение. Мы — новая концепция в Мюнхене, с авторскими рецептами, которых больше нигде не найти. Каждый бургер, сэндвич и соус готовится вручную, по нашим собственным идеям, без компромиссов в качестве. Свежая смэш-говядина, поджаренные брioш-булочки и команда, которая готовит с настоящей страстью — это King Zone.",
-        "counter-label": "Уже съедено",
+        "counter-label": "Уже съедено бургеров",
         "gallery-heading": "Галерея",
         "discounts-heading": "Скидки",
         "special-heading": "Хиты продаж 🔥",
@@ -568,7 +591,7 @@
         "nav-menu": "Меню", "nav-find": "Де ми", "nav-career": "Робота",
         "about-heading": "Про нас",
         "about-text": "У King Zone ми перетворюємо кожен бургер на маленьку пригоду. Ми — нова концепція в Мюнхені, з авторськими рецептами, яких більше ніде не знайти. Кожен бургер, сендвіч і соус готується вручну, за нашими власними ідеями, без жодних компромісів у якості. Свіжа смэш-яловичина, підсмажені булочки бріош і команда, яка готує зі справжньою пристрастю — це King Zone.",
-        "counter-label": "Вже з'їдено",
+        "counter-label": "Вже з'їдено бургерів",
         "gallery-heading": "Галерея",
         "discounts-heading": "Знижки",
         "special-heading": "Хіти продажів 🔥",
@@ -602,7 +625,6 @@
     /* ===== ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ===== */
     animateBrandTitle();
     runBurgerCounter();
-    createParticles();
     window.addEventListener('load', createBackgroundEffects);
   </script>
 
