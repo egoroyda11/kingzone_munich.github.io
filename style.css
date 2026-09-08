@@ -84,31 +84,51 @@ body {
   50% { opacity: 0.85; transform: scale(1.1); }
 }
 
-/* Белый дым — БЕЗ filter:blur(). Вместо размытия — несколько слоёв
-   radial-gradient друг на друге: каждый слой сам по себе мягкий по краям
-   (это свойство градиента, не блюра), а вместе они складываются в
-   объёмный "клубящийся" силуэт, похожий на настоящий дым */
+/* Белый дым — новая версия: несколько мягких кругов разного размера,
+   смещённых друг относительно друга по вертикали (имитирует "клубы" дыма),
+   с небольшим блюром ТОЛЬКО по краю (через маску), а не по всему элементу —
+   это убирает "квадратный" силуэт, который был в предыдущей версии */
 .smoke-wisp {
   position: absolute;
-  width: 70px;
-  height: 320px;
-  background:
-    radial-gradient(circle at 50% 12%, rgba(255,255,255,0.55) 0%, transparent 55%),
-    radial-gradient(circle at 38% 38%, rgba(255,255,255,0.45) 0%, transparent 50%),
-    radial-gradient(circle at 62% 62%, rgba(255,255,255,0.4) 0%, transparent 50%),
-    radial-gradient(circle at 45% 88%, rgba(255,255,255,0.32) 0%, transparent 48%);
+  width: 90px;
+  height: 340px;
   opacity: 0;
   animation-name: smokeReal;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
+/* Каждое "облачко" — отдельный круг с мягким краем (radial-gradient
+   сам по себе уже даёт плавный переход в прозрачность, без filter:blur) */
+.smoke-wisp::before,
+.smoke-wisp::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.15) 45%, transparent 70%);
+}
+
+.smoke-wisp::before {
+  top: 0;
+  width: 70px;
+  height: 70px;
+  transform: translateX(-50%);
+}
+
+.smoke-wisp::after {
+  top: 90px;
+  width: 90px;
+  height: 90px;
+  transform: translateX(-60%);
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.12) 45%, transparent 70%);
+}
+
 @keyframes smokeReal {
-  0%   { opacity: 0; transform: translate(0, 15px) scaleY(0.9) rotate(0deg); }
-  25%  { opacity: 0.5; transform: translate(8px, 0px) scaleY(1) rotate(2deg); }
-  50%  { opacity: 0.45; transform: translate(-6px, -20px) scaleY(1.08) rotate(-2deg); }
-  75%  { opacity: 0.25; transform: translate(10px, -35px) scaleY(1.1) rotate(1deg); }
-  100% { opacity: 0; transform: translate(-4px, -50px) scaleY(0.95) rotate(0deg); }
+  0%   { opacity: 0; transform: translate(0, 20px) scale(0.85); }
+  30%  { opacity: 0.55; transform: translate(10px, 0px) scale(1); }
+  60%  { opacity: 0.4; transform: translate(-8px, -30px) scale(1.1); }
+  100% { opacity: 0; transform: translate(6px, -70px) scale(1.2); }
 }
 
 /* ===== КАРТОЧКИ-ОСТРОВА ===== */
@@ -698,48 +718,59 @@ section h2 {
     font-size: 14px;
   }
 
-  /* --- НАВИГАЦИЯ: горизонтальная прокручиваемая полоса вместо переноса строк --- */
+  /* --- НАВИГАЦИЯ: всё в ОДИН ряд (сжато), языки — отдельным рядом ниже --- */
   .navbar {
-    flex-wrap: nowrap;      /* запрещаем перенос на новую строку */
-    overflow-x: auto;       /* вместо этого — горизontальная прокрутка (свайп) */
-    justify-content: flex-start;
-    padding: 10px 14px;
-    gap: 10px;
-    scrollbar-width: none;  /* прячем полосу прокрутки — выглядит чище */
-  }
-  .navbar::-webkit-scrollbar {
-    display: none;
+    flex-direction: column;   /* два ряда друг под другом: сначала меню, потом языки */
+    align-items: stretch;
+    padding: 8px 10px;
+    gap: 6px;
   }
   .nav-links {
     flex-wrap: nowrap;
-    gap: 16px;
-    margin: 0;               /* убираем auto-центрирование — на телефоне список длиннее экрана */
-    flex-shrink: 0;
+    justify-content: space-between; /* распределяем по всей ширине экрана */
+    gap: 4px;
+    width: 100%;
+    overflow-x: auto;         /* если совсем не влезает — можно чуть прокрутить */
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
   }
   .nav-links a {
-    font-size: 13px;
-    white-space: nowrap;    /* текст пункта меню не переносится на 2 строки */
+    font-size: 10px;          /* заметно меньше, чтобы всё уместилось в один ряд */
+    white-space: nowrap;
+    letter-spacing: 0;
   }
   .nav-menu-btn {
-    font-size: 13px;
-    padding: 6px 14px;
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+  .nav-instagram svg {
+    width: 16px;
+    height: 16px;
   }
   .lang-switch {
-    flex-shrink: 0;
+    justify-content: flex-end;   /* языки прижаты вправо, вторым рядом */
+    width: 100%;
+    gap: 4px;
   }
   .lang-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 11px;
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
   }
 
-  /* --- ОБЩИЙ РАЗМЕР ТЕКСТА И КАРТОЧЕК --- */
+  /* --- ОБЩИЙ РАЗМЕР ТЕКСТА И КАРТОЧЕК ---
+       Карточки заметно компактнее и по padding, и по ширине (95% вместо
+       растягивания на всю ширину экрана) — так виден фон по бокам */
   section h2, .card h2 {
-    font-size: 20px;
+    font-size: 18px;
   }
   .card {
-    padding: 24px 18px;      /* было 40px 30px — компактнее на маленьком экране */
-    margin: 20px auto;
+    padding: 18px 14px;      /* было 40px 30px */
+    margin: 16px auto;
+    width: 92%;               /* не на весь экран — оставляет виден фон по краям */
+    border-radius: 16px;      /* чуть меньше скругление под меньший размер */
   }
   .about h2 {
     font-size: 24px;
@@ -753,27 +784,27 @@ section h2 {
 
   /* --- СЧЁТЧИК БУРГЕРОВ --- */
   .counter-number {
-    font-size: 38px;
-    min-width: 110px;
+    font-size: 32px;
+    min-width: 90px;
   }
   .burger-icon {
-    font-size: 34px;
+    font-size: 28px;
   }
 
   /* --- МЕНЮ --- */
   .menu-main-title {
-    font-size: 28px;
+    font-size: 26px;
   }
   .menu-tier h3 {
-    font-size: 20px;
+    font-size: 18px;
   }
   .video-carousel {
     gap: 6px;
   }
   .carousel-btn, .carousel-arrow {
-    width: 34px;
-    height: 34px;
-    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
   }
   .carousel-img {
     height: 150px;    /* было 180px — компактнее */

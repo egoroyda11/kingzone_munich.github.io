@@ -4,30 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>King Zone Burger München</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=7">
-</head>
 
-<body>
-
-  <!-- ===== ФИКС: страница всегда открывается СВЕРХУ, даже если в адресе
-       остался "якорь" (#menu и т.п.) от прошлого клика по навигации =====
-       Это должно стоять В САМОМ НАЧАЛЕ body, чтобы сработать до того,
-       как браузер попытается сам проскроллить к элементу по якорю */
+  <!-- ===== ФИКС "ПРЫЖКА ВНИЗ" ПРИ ОБНОВЛЕНИИ =====
+       Стоит в самом начале <head>, чтобы сработать РАНЬШЕ, чем браузер
+       вообще успеет прочитать якорь (#menu и т.п.) из адреса и попытаться
+       сам туда прыгнуть. Убираем якорь ДО того, как это может произойти. -->
   <script>
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    window.scrollTo(0, 0);
-    window.addEventListener('load', () => {
-      window.scrollTo(0, 0);
-      if (window.location.hash) {
-        // Убираем #menu и т.п. из адресной строки, чтобы при СЛЕДУЮЩЕМ
-        // обновлении браузер тоже не пытался сам туда прыгнуть
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
-    });
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=8">
+</head>
+
+<body>
+
+  <!-- Резервная подстраховка: если что-то всё же попытается проскроллить
+       страницу во время загрузки — возвращаем наверх ещё раз при полной загрузке -->
+  <script>
+    window.addEventListener('load', () => window.scrollTo(0, 0));
   </script>
 
   <!-- ===== ЗОЛОТАЯ МЕРЦАЮЩАЯ РАМКА ВСЕГО САЙТА ===== -->
@@ -472,46 +473,46 @@
       const pageHeight = document.body.scrollHeight;
       container.style.height = pageHeight + 'px';
 
-      // Золотые звёзды — маленькие мерцающие точки
-      const starCount = 70;
+      // Золотые звёзды — делим страницу на полосы, чтобы не скапливались в одном месте
+      const starCount = 110; // было 70 — заметно больше
+      const starBand = pageHeight / starCount;
       for (let i = 0; i < starCount; i++) {
         const star = document.createElement('div');
         star.className = 'gold-star';
-        star.style.top = (Math.random() * pageHeight) + 'px';
+        star.style.top = (i * starBand + Math.random() * starBand) + 'px';
         star.style.left = (Math.random() * 100) + '%';
-        star.style.animationDuration = (3 + Math.random() * 5) + 's';
-        star.style.animationDelay = (Math.random() * 10) + 's';
+        star.style.animationDuration = (1.5 + Math.random() * 2.5) + 's'; // было 3-8с — теперь заметно быстрее мерцают
+        star.style.animationDelay = (Math.random() * 5) + 's';
         container.appendChild(star);
       }
 
-      // Золотые частицы — крупнее звёзд, появляются/исчезают чаще,
-      // теперь тоже часть страницы (скроллятся вместе с ней)
-      const particleCount = 60;
+      // Золотые частицы — тоже по полосам, чтобы не толкались друг с другом
+      const particleCount = 90; // было 60
+      const particleBand = pageHeight / particleCount;
       for (let i = 0; i < particleCount; i++) {
         const p = document.createElement('div');
         p.className = 'gold-particle';
-        p.style.top = (Math.random() * pageHeight) + 'px';
+        p.style.top = (i * particleBand + Math.random() * particleBand) + 'px';
         p.style.left = (Math.random() * 100) + '%';
         p.style.width = p.style.height = (3 + Math.random() * 3) + 'px';
-        p.style.animationDuration = (3 + Math.random() * 4) + 's';
-        p.style.animationDelay = (Math.random() * 6) + 's';
+        p.style.animationDuration = (1.8 + Math.random() * 2.2) + 's'; // было 3-7с — быстрее
+        p.style.animationDelay = (Math.random() * 4) + 's';
         container.appendChild(p);
       }
 
-      // Белый дым — делим страницу на полосы, чтобы силуэты НЕ накладывались
-      const smokeCount = 20; // было 14 — больше
-      const bandHeight = pageHeight / smokeCount;
+      // Белый дым — по полосам, реже (чтобы не мешать звёздам), обеими сторонами
+      const smokeCount = 20;
+      const smokeBand = pageHeight / smokeCount;
       for (let i = 0; i < smokeCount; i++) {
         const smoke = document.createElement('div');
         smoke.className = 'smoke-wisp';
-        const bandStart = i * bandHeight;
-        smoke.style.top = (bandStart + Math.random() * bandHeight * 0.5) + 'px';
+        smoke.style.top = (i * smokeBand + Math.random() * smokeBand * 0.5) + 'px';
         if (i % 2 === 0) {
           smoke.style.left = (Math.random() * 6) + '%';
         } else {
           smoke.style.right = (Math.random() * 6) + '%';
         }
-        smoke.style.animationDuration = (9 + Math.random() * 6) + 's';
+        smoke.style.animationDuration = (10 + Math.random() * 6) + 's';
         smoke.style.animationDelay = (Math.random() * 10) + 's';
         container.appendChild(smoke);
       }
